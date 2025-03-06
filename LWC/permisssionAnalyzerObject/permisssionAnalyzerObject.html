@@ -1,0 +1,491 @@
+<template>
+    <!-- <lightning-card> -->
+      <div style="background: border-box;">
+      <lightning-input label="Search Objects" value={searchKey} onchange={handleSearchKeyChange} placeholder="Search Object" style="max-width: 25vw; margin-left: 5px;" variant="label-hidden" type="search" aria-label="Search for objects" class="search-input"></lightning-input>
+      <template if:true={hasObjects}>
+        <template for:each={filteredObjList} for:item="obj">
+          <div key={obj.value}>
+            <div class="slds-card__header slds-grid">
+              <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                  <lightning-icon icon-name={obj.icon} data-name={obj.value} onclick={toggleAccordion} class={obj.cursorClass} size="x-small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                  <h2>
+                    <button data-id="labelbutton" style={obj.buttonStyle} class={obj.cursorClass} onclick={toggleAccordion} data-name={obj.value} aria-expanded={obj.isOpen}>
+                      <span title={obj.label}>{obj.label}</span>
+                    </button>
+                  </h2>
+                </div>
+              </header>
+            </div>
+            <div if:true={obj.isOpen} class="slds-card__body">            
+              <template if:true={enableHelpTextIcon}>
+                <template if:false={obj.noAccess}>
+                  <div style="width:100%;margin-right:auto;position:sticky;top:0px; background:white; display:flex; justify-content: space-between; padding: 5px;">
+                    <span style="display:flex;justify-content:center; margin:top:1.5rem;padding: 1rem;background-color: rgb(219 234 254);border-radius: 0.5rem">
+                      <h6 style="font-size: 12px; font-weight: bolder; color:rgb(55 65 81)">Click on Info Icon ( <lightning-button-icon icon-name="utility:info" disabled variant="bare" size="small" style="margin-bottom:3px; margin-right:2px;"></lightning-button-icon>) if you want to know the Origin for the enabled access </h6>
+                    </span>
+                  </div>
+                </template>
+              </template>
+              <div style="display:flex; justify-content: center; align-items: center;">
+                <lightning-layout style="width: 100%; gap: 5px; margin: 15px;">  
+                      <lightning-layout-item padding="around-small" class="slds-box" style="max-height:60vh;" size="3_of_12">
+                        <template if:false={isShowObjectSpinner}>
+                          <template if:true={isMuteMode}>
+                            <div style="display:flex;gap:6px;justify-content:center">
+                              <button class="slds-button slds-button_neutral" name="mute cancel" onclick={handleCancel}> Cancel </button>
+                              <button class="slds-button slds-button_brand" onclick={handleMutePermSave} disabled={isSaveDisabled}> Save </button>
+                            </div>
+                          </template>
+                          <template if:true={isObjEditMode}>
+                            <div style="display:flex;gap:6px;justify-content:center;padding-right:110px">
+                              <button class="slds-button slds-button_neutral" name="obj cancel" onclick={handleCancel}> Cancel </button>
+                              <button class="slds-button slds-button_brand" onclick={handleObjectPermSave} disabled={isSaveDisabled}> Save </button>
+                            </div>
+                          </template>
+                          <div class="grid-container" style="margin-right:auto; margin-top:50px; position:sticky; top:0px; z-index:10;">
+                            <div class="grid-item no-gap">Object Permissions</div>
+                            <div class="grid-item no-gap">Enabled</div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item no-gap">Muted</div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">Create</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input style="display:flex;justify-content:end;" type="checkbox" name="create" checked={objPermissions.PermissionsCreate} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsCreate}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content;" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsCreate" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="create" checked={muteobjPermission.PermissionsCreate} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">Read</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input style="display:flex;justify-content:end;" type="checkbox" name="read" checked={objPermissions.PermissionsRead} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsRead}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content;" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsRead" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="read" checked={muteobjPermission.PermissionsRead} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">Edit</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input style="display:flex;justify-content:end;" type="checkbox" name="edit" checked={objPermissions.PermissionsEdit} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsEdit}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsEdit" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="edit" checked={muteobjPermission.PermissionsEdit} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">Delete</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input type="checkbox" style="display:flex;justify-content:end;" name="delete" checked={objPermissions.PermissionsDelete} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsDelete}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsDelete" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="delete" checked={muteobjPermission.PermissionsDelete} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">View All</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input type="checkbox" style="display:flex;justify-content:end;" name="viewAllRecords" checked={objPermissions.PermissionsViewAllRecords} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsViewAllRecords}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsViewAllRecords" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="viewAllRecords" checked={muteobjPermission.PermissionsViewAllRecords} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                          <div class="grid-container">
+                            <span class="grid-item">Modify All</span>
+                            <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                              <lightning-input style="display:flex;justify-content:end;" type="checkbox" name="modifyAllRecords" checked={objPermissions.PermissionsModifyAllRecords} onchange={handlePermissionChange} disabled={isObjEditDisabled}></lightning-input>
+                              <template if:true={enableHelpTextIcon}>
+                                <template if:true={objPermissions.PermissionsModifyAllRecords}>
+                                  <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content" variant="bare" icon-name="utility:info" size="x-small" name="PermissionsModifyAllRecords" onclick={handleHelpText}></lightning-button-icon>
+                                </template>
+                              </template>
+                              <template if:true={enableObjPermissions}>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isObjEditMode}>
+                                    <div style="display:flex;justify-content:end;margin-right:5px;">
+                                      <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleObjEdit} variant="bare" size="small"></lightning-button-icon>
+                                    </div>
+                                  </template>
+                                </template>
+                              </template>
+                            </div>
+                            <template if:true={enableGrpMutePermissions}>
+                              <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                                <lightning-input type="checkbox" name="modifyAllRecords" checked={muteobjPermission.PermissionsModifyAllRecords} onchange={handleMutePermissionChange} disabled={isObjMuteEditDisabled}></lightning-input>
+                                <template if:true={enableObjEditAccess}>
+                                  <template if:false={isMuteMode}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleMutePermissionsEdit} variant="bare" size="small"></lightning-button-icon>
+                                  </template>
+                                </template>
+                              </div>
+                            </template>
+                          </div>
+                        </template>
+                        <template if:true={isShowObjectSpinner}>
+                          <div class="slds-align_absolute-center" style="height: 100%; background-color: #f3f3f3;z-index:10;display:flex;position:relative;">
+                            <div class="">
+                              <div class="slds-col">
+                                <div class="slds-is-relative">
+                                  <div role="status" class="slds-spinner slds-spinner_medium">
+                                    <span style="z-index: -999;" class="slds-assistive-text">Loading</span>
+                                    <div class="slds-spinner__dot-a"></div>
+                                    <div class="slds-spinner__dot-b"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div style="margin-top: 35px; font-weight: 600;" class="slds-col slds-p-left_small">
+                                <span>Waiting to fetch Object Data</span>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </lightning-layout-item>
+                      <lightning-layout-item padding="around-small" class="slds-box" style="max-height:60vh;" size="6_of_12">
+                        <c-permission-analyzer-field user-id={userId} enable-obj-permissions={enableObjPermissions} field-permissions-cache={fieldPermissionsCache} enable-grp-mute-permissions={enableGrpMutePermissions} enable-help-text-icon = {enableHelpTextIcon} perm-set-id={permissionSetIdToUpdate} perm-set-grp-id={permSetGrpId} object-name={dataSetObject} metadata-permissions={metadataPermission} permission-setid={permissionSetIds} perm-set-lists={permSetList} user-value={userValue} user-value-length={userValueLength} prof-name={profName} perset-name={persetName} type-value={typeValue} onnewfieldpermissionforopendedobject={fieldPermissonCacheHandler}></c-permission-analyzer-field>
+                      </lightning-layout-item>
+                  <!-- RecordType Permissions -->
+                  <lightning-layout-item padding="around-small" class="slds-box" style="max-height:60vh;" size="3_of_12">
+                    <c-permission-analyzer-record-type user-id={userId} enable-record-type-edit={enableRecordTypePermissions} record-type-cache={recordTypeCache} perm-set-id={permissionSetIdToUpdate} object-name={dataSetObject} enabled-default={enableDefaultProfile} onnewcreatedpermset={handleRecCustomEvent} prof-name={profName} perset-name={persetName} perm-name={permApiName} permission-type={type} user-value={userValue} user-value-length={userValueLength} perm-set-lists={permSetList} onnewrecpermissionforopendedobject={recPermissonCacheHandler}></c-permission-analyzer-record-type>
+                  </lightning-layout-item>
+                </lightning-layout>
+              </div>
+            </div>
+            <div class="slds-m-bottom_small slds-border_bottom"></div>
+          </div>
+        </template>
+      </template>
+      <template if:false={hasObjects}>
+        <span style="display:flex;justify-content:center;">
+          <h2 style="font-size: 20px;">No Object Found</h2>
+        </span>
+      </template>
+      </div>
+    <!-- </lightning-card> -->
+    <!-- Help Text -->
+    <template if:true={showSpinner}>
+      <div class="exampleHolder">
+        <lightning-spinner class="slds-is-fixed" alternative-text="Loading" size="large"></lightning-spinner>
+      </div>
+    </template>
+    <template if:true={showPopOver}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header" style="display:flex;justify-content:space-between;">
+            <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">Permission Origin</h1>
+            <button class="slds-button slds-button_icon slds-button_icon-small slds-popover__close close-button" title="Close dialog" onclick={handleClosePopover}>
+              <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+              <span class="slds-assistive-text">Close dialog</span>
+            </button>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <template if:true={isProfile}>
+              <div>
+                <h4 class="slds-text-heading_medium">Profile</h4>
+                <p class="slds-m-left_medium">{profileName}</p>
+              </div>
+            </template>
+            <template if:true={isPermSet}>
+              <template if:true={isProfile}>
+                <hr class="slds-m-vertical_medium" />
+              </template>
+              <div>
+                <h4 class="slds-text-heading_medium">Permission Sets</h4>
+                <template for:each={permSetName} for:item="perms">
+                  <p key={perms} class="slds-m-left_medium">{perms}</p>
+                </template>
+              </div>
+            </template>
+            <template if:true={isPermSetGrp}>
+              <template if:true={isProfile}>
+                <hr class="slds-m-vertical_medium" />
+              </template>
+              <template if:false={isProfile}>
+                <template if:true={isPermSet}>
+                  <hr class="slds-m-vertical_medium" />
+                </template>
+              </template>
+              <div>
+                <h4 class="slds-text-heading_medium">Permission Set Groups</h4>
+                <template for:each={permSetGrpName} for:item="group">
+                  <p key={group} class="slds-m-left_medium">{group}</p>
+                </template>
+              </div>
+            </template>
+          </div>
+          <div class="slds-modal__footer"></div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={isUsersTable}>
+      <template if:true={ShowSpinner}>
+        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+      </template>
+      <template if:false={showSpinner}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-04" class="slds-modal__title slds-hyphenate" tabindex="-1">
+                <template if:true={isProfileAffectHeading}> Affected users for the Profile <b>{profName}</b>
+                </template>
+                <template if:true={isPermissionSetAffectHeading}> Affected users for the Permission Set <b>{persetName}</b>
+                </template>
+                <template if:true={isPermissionSetGroupAffectHeading}> Affected users for the Permission Set Group <b>{persetName}</b>
+                </template>
+              </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-17">
+              <template if:true={showUsers}>
+                <lightning-datatable key-field="Id" data={userValue} columns={userColumn} class="slds-p-around_xx-small remove-underline custom-datatable" hide-checkbox-column="true" sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting}></lightning-datatable>
+              </template>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral" aria-label="Cancel and close" name='user cancel' onclick={handleCancel}>Cancel</button>
+            </div>
+          </div>
+        </section>
+      </template>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={isModalOpen}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading" class="slds-modal slds-fade-in-open slds-modal_large">
+        <div class="slds-modal__container">
+          <template if:true={isProfileAffect}>
+            <button style="background: white;margin-right: 10px;" class="slds-button slds-button_icon slds-modal__close" name="profile cancel" onclick={handleCancel}>
+              <lightning-icon icon-name="utility:close" alternative-text="close" size="small" aria-label="Cancel" name="profile cancel" onclick={handleCancel}></lightning-icon>
+              <span class="slds-assistive-text">Cancel and close</span>
+            </button>
+          </template>
+          <template if:true={isProfileAffectObject}>
+            <button style="background: white;margin-right: 10px;" class="slds-button slds-button_icon slds-modal__close" name="profile affect cancel" onclick={handleCancel}>
+              <lightning-icon icon-name="utility:close" alternative-text="close" size="small" aria-label="Cancel" name="profile affect cancel" onclick={handleCancel}></lightning-icon>
+              <span class="slds-assistive-text">Cancel and close</span>
+            </button>
+          </template>
+          <div class="slds-modal__header">
+            <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">
+              <template if:true={isProfileAffect}> Profile Level - Update </template>
+              <template if:true={isPermissionSetAffect}> Permissionset Level - Update </template>
+              <template if:true={isProfileAffectObject}> Profile Level With Affected Objects - Update </template>
+              <template if:true={isPermissionSetAffectObject}> Permissionset Level With Affected Objects - Update </template>
+              <template if:true={isPermissionSetGroupAffect}> Permissionsetgroup Level - Update </template>
+              <template if:true={isPermissionSetGroupAffectObject}> Permissionsetgroup Level With Affected Objects - Update </template>
+            </h1>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-18">
+            <span style="display:flex; flex-direction: column; align-items: center;">
+              <template if:true={isProfileAffect}>
+                <span> This will affect {userValueLength} Users of the Profile <b>{profName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <template if:true={isPermissionSetAffect}>
+                <span> This will affect {userValueLength} Users of the Permission Set <b>{persetName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <template if:true={isProfileAffectObject}>
+                <span> {truncatedArrayString} These objects will be impacted after saving the records and will also affect {userValueLength} Users of the Profile <b>{profName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <template if:true={isPermissionSetAffectObject}>
+                <span> {truncatedArrayString} These objects will be impacted after saving the records and will also affect {userValueLength} Users of the Permission Set <b>{persetName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <template if:true={isPermissionSetGroupAffect}>
+                <span> This will affect {userValueLength} Users of the Permission Set Group <b>{persetName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <template if:true={isPermissionSetGroupAffectObject}>
+                <span> {truncatedArrayString} These objects will be impacted after saving the records and will also affect {userValueLength} Users of the Permission Set Group <b>{persetName}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+            </span>
+          </div>
+          <div class="slds-modal__footer">
+            <template if:true={isProfileAffect}>
+              <button class="slds-button slds-button_neutral" aria-label="Create PermissionSet" name="Create PermissionSet" onclick={handleCreatePermissionSet} disabled={disableCreatePermSet}> Create PermissionSet </button>
+              <button class="slds-button slds-button_neutral" aria-label="Existing PermissionSets" name="Existing PermissionSets" onclick={handleExistingPermissionSet} disabled={disableCreatePermSet}> Modify Existing PermissionSet </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile Confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <template if:true={isPermissionSetAffect}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="profile cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile Confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <template if:true={isProfileAffectObject}>
+              <button class="slds-button slds-button_neutral" aria-label="Create PermissionSet" name="Create PermissionSet" onclick={handleCreatePermissionSet} disabled={disableCreatePermSet}> Create PermissionSet </button>
+              <button class="slds-button slds-button_neutral" aria-label="Existing PermissionSets" name="Existing PermissionSets" onclick={handleExistingPermissionSet} disabled={disableCreatePermSet}> Modify Existing PermissionSet </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile affect confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <template if:true={isPermissionSetAffectObject}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="profile affect cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile affect confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <template if:true={isPermissionSetGroupAffect}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="persetgrp cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="persetgrp confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <template if:true={isPermissionSetGroupAffectObject}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="persetgrp affect object cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="persetgrp affect object confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={isExistingPermission}>
+      <section style="z-index:9999999;" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-03" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header" style="display:flex;justify-content:space-between;">
+            <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate" tabindex="-1">Existing PermissionSets</h1>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+            <template for:each={permSetList} for:item="permSet">
+              <div key={permSet.Id}>
+                <div style="display:flex; justify-content:space-between;">
+                  <span>{permSet.Label}</span>
+                  <lightning-button data-id={permSet.Id} variant="label-hidden" label='Add' placeholder="Add" onclick={handleUpdateExistingPermissionSet}></lightning-button>
+                </div>
+                <hr class="slds-m-vertical_medium" />
+              </div>
+            </template>
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" aria-label="Cancel" name="Existing PermissionSet cancel" onclick={handleCancel}> Cancel </button>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" style="z-index:999999;" role="presentation"></div>
+    </template>
+    <template if:true={showSpinner}>
+      <div class="exampleHolder">
+        <lightning-spinner class="slds-is-fixed" alternative-text="Loading" size="large" style="z-index: 99999999;"></lightning-spinner>
+      </div>
+    </template>
+    <template if:true={isCreateNewPermissionSet}>
+      <c-manage-permission-set-create object-name={dataSetObject} update-type='Obj' object-dependencies={objectDependencies} updated-perms={updatedPermissions} changed-obj-permissions={changedObjPermissions} changed-field-permissions={changedFieldPermissions} selected-user-id={userId} onclosecreatepermset={closeCreateModal} onnewcreatedpermset={handleCustomEvent}></c-manage-permission-set-create>
+    </template>
+  </template>

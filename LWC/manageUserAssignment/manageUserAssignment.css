@@ -1,0 +1,151 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.grid-item {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+.no-gap {
+    margin: 0;
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.selected-user {
+    border: 2px solid var(--lwc-brandPrimary);
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.selected-user:hover {
+    background-color: #eef1f6;
+    border-color: var(--lwc-brandPrimary);
+    cursor: pointer;
+}
+
+.fixed-buttons {
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.user-highlight {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.user-highlight:hover {
+    background-color: #f3f3f3;
+}
+
+.buttonColor {
+    display: inline-flex;
+    align-items: center;
+    row-gap: 1.5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3.5px;
+    padding-bottom: 3.5px;
+    border-radius: 10%;
+    font-size: small;
+    font-weight: bold;
+    border: 0px;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+
+.available-group,
+.permission-item,
+.available-publicgroup,
+.available-queue {
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.available-group:hover,
+.permission-item:hover,
+.available-publicgroup:hover,
+.available-queue:hover {
+    background-color: #f3f3f3;
+}
+
+.slds-button {
+    padding: 0.200rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* Use CSS custom properties for consistent theming */
+:host {
+    --ua-primary-color: var(--lwc-brandPrimary);
+    --ua-border-radius: 0.25rem;
+    --ua-transition: all 0.2s ease;
+    --ua-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve list item styling */
+.list-item {
+    padding: 0.75rem;
+    border-radius: var(--ua-border-radius);
+    transition: var(--ua-transition);
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #f3f3f3;
+        transform: translateY(-1px);
+    }
+    
+    &.selected {
+        border: 2px solid var(--ua-primary-color);
+    }
+}
+
+/* Improve button accessibility */
+.transfer-button {
+    &:focus-visible {
+        outline: 2px solid var(--ua-primary-color);
+        outline-offset: 2px;
+    }
+}
+
+/* Add responsive design */
+@media (max-width: 768px) {
+    .slds-modal__container {
+        margin: 0 1rem;
+    }
+}

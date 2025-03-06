@@ -1,0 +1,84 @@
+/* Use CSS custom properties for maintainability */
+:host {
+    --rt-primary-color: var(--lwc-brandPrimary);
+    --rt-grid-border: 1px solid #dddbda;
+    --rt-transition-speed: 0.3s;
+}
+
+/* Improved grid layout */
+.record-type-grid {
+    display: grid;
+    grid-template-columns: minmax(200px, 2fr) repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1px;
+    background-color: var(--lwc-colorBorder);
+    border-radius: var(--lwc-borderRadiusMedium);
+}
+
+/* Improved accessibility focus states */
+.checkbox-input:focus-within {
+    outline: 2px solid var(--rt-primary-color);
+    outline-offset: 2px;
+}
+
+/* Responsive design improvements */
+@media (max-width: 768px) {
+    .record-type-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.grid-item {
+  border: 1px solid grey;
+  text-align: center;
+  padding: 5px;
+
+}
+
+.no-gap {
+  margin: 0;
+  padding: 10px;
+  background-color: #f3f3f3;
+}
+
+.THIS .spins::after {
+  position: absolute;
+  content: 'Please wait while loading';
+  width: 100%;
+  text-align: center;
+  top: calc(50% + 3em);
+  font-weight: bold;
+}
+.slds-modal__header {
+  background-color: var(--lwc-brandPrimary);
+  color: white;
+}
+/* Enhanced Button Styling */
+.slds-button {
+  padding: 0.200rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.slds-button_brand {
+  background-color: var(--lwc-brandPrimary);
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+  background: #c9c9c9;
+  transform: none;
+  cursor: not-allowed;
+}

@@ -1,0 +1,543 @@
+.custom-tab-label {
+    background-color: #f3f3f3;
+  }
+  
+  .custom-tabset-label .slds-active .slds-tabs_scoped__link,
+  .slds-active .slds-tabs--scoped__link,
+  .slds-is-active .slds-tabs_scoped__link,
+  .slds-is-active .slds-tabs--scoped__link {
+    background-color: #00A1E0;
+  }
+  
+  /* Main Container */
+  .permisphere-watermark {
+      position: relative;
+      min-height: 100vh;
+      width: 100%;
+      padding: 2rem;
+      background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
+      z-index: 1;
+      transform: translateZ(0);
+      will-change: transform;
+      backface-visibility: hidden;
+  }
+  
+  /* Background Overlay */
+  .permisphere-watermark::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('/resource/Permisphere') center/cover no-repeat fixed;
+      opacity: 0.04;
+      z-index: -1;
+  }
+  
+  
+  /* Enhanced Input Styling */
+  .search-container {
+      position: relative;
+      max-width: 300px;
+      margin-bottom: 1rem;
+  }
+  
+  .user-label {
+      margin-bottom: 0;
+  }
+  
+  .user-label lightning-input {
+      --slds-c-input-radius-border: 8px;
+      --slds-c-input-color-border: #e2e8f0;
+      --slds-c-input-shadow-focus: 0 0 0 2px #0070d2;
+      transition: all 0.2s ease;
+  }
+  
+  .user-label lightning-input:focus-within {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Dropdown Results Container */
+  .search-results {
+      position: absolute;
+      width: 100%;
+      /* Height calculation: (40px item height + 2px border) * 5 items */
+      max-height: 210px;
+      margin-top: 0.25rem;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow-y: auto;
+      scroll-behavior: smooth;
+  }
+  
+  /* User Info Layout */
+  .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+      min-width: 0;
+  }
+  
+  /* Clickable Text Elements */
+  .user-name, 
+  .user-email {
+      display: block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: inherit; /* Inherit cursor from parent */
+      pointer-events: none; /* Prevent hover/click events */
+  }
+  
+  /* Name Styling */
+  .user-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #2d3748;
+      line-height: 1.4;
+      margin-bottom: 2px;
+  }
+  
+  /* Email Styling */
+  .user-email {
+      font-size: 0.75rem;
+      color: #718096;
+      line-height: 1.4;
+      word-break: break-word;
+  }
+  
+  /* Non-clickable Container */
+  .slds-media {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      cursor: default; /* Indicate non-clickable */
+  }
+  
+  /* Icon Container */
+  .slds-media__figure {
+      padding: 0;
+      margin-right: 0.5rem;
+      cursor: default; /* Indicate non-clickable */
+  }
+  
+  /* Remove hover effects */
+  .user-name:hover,
+  .user-email:hover {
+      background-color: transparent;
+      color: inherit;
+      text-decoration: none;
+  }
+  
+  /* Active State */
+  .user-name:active,
+  .user-email:active {
+      background-color: rgba(0, 112, 210, 0.12);
+      transform: translateY(1px);
+  }
+  
+  /* List Item Container */
+  .slds-listbox__item {
+      height: auto;
+      min-height: 48px;
+      padding: 0.25rem 0.5rem;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.2s ease;
+      cursor: pointer;
+  }
+  
+  .slds-listbox__item:hover {
+      background-color: rgba(0, 112, 210, 0.08);
+  }
+  
+  /* Media Container */
+  .slds-media {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: inherit; /* Inherit cursor from parent */
+  }
+  
+  /* Optimize scrollbar appearance */
+  .search-results::-webkit-scrollbar {
+      width: 4px;
+  }
+  
+  .search-results::-webkit-scrollbar-track {
+      background: transparent;
+  }
+  
+  .search-results::-webkit-scrollbar-thumb {
+      background: #d8dde6;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+  }
+  
+  .search-results::-webkit-scrollbar-thumb:hover {
+      background: #b0b7c3;
+  }
+  
+  /* Smooth scroll indicators */
+  .search-results::before,
+  .search-results::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 20px;
+      pointer-events: none;
+      z-index: 1;
+  }
+  
+  .search-results::before {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+  }
+  
+  .search-results::after {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(255,255,255,0.9), transparent);
+  }
+  
+  /* Optimize text elements */
+  .user-name {
+      font-size: 0.875rem;
+      line-height: 1.2;
+      color: #2d3748;
+      margin-bottom: 2px;
+  }
+  
+  .user-email {
+      font-size: 0.75rem;
+      line-height: 1.2;
+      color: #718096;
+  }
+  
+  /* Loading state */
+  .loading-indicator {
+      height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  /* User List Container */
+  .slds-listbox {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+  }
+  
+  /* User List Item */
+  .slds-listbox__item:hover {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      transform: translateX(4px);
+  }
+  
+  /* Icon Styling */
+  .slds-media__figure {
+      padding: 0;
+      margin-right: 0.5rem;
+  }
+  
+  /* Animation for list items */
+  .slds-listbox__item {
+      animation: slideIn 0.2s ease-out;
+  }
+  
+  @keyframes slideIn {
+      from {
+          opacity: 0;
+          transform: translateX(-10px);
+      }
+      to {
+          opacity: 1;
+          transform: translateX(0);
+      }
+  }
+  
+  /* Combobox Styling */
+  lightning-combobox {
+      --slds-c-combobox-color-border: #e2e8f0;
+      --slds-c-combobox-radius-border: 8px;
+  }
+  
+  /* Grid Layout */
+  .slds-grid.slds-wrap {
+      gap: 1.5rem;
+  }
+  
+  /* Tab Styling */
+  .custom-tabset-label {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+  }
+  
+  .custom-tab-label {
+      transition: all 0.2s ease;
+  }
+  
+  .slds-tabs_scoped__link {
+      padding: 1rem 1.5rem;
+      font-weight: 500;
+  }
+  
+  .slds-is-active .slds-tabs_scoped__link {
+      background: linear-gradient(45deg, #0070d2, #1589ee);
+      color: white;
+  }
+  
+  /* Refresh Button */
+  .refresh-button {
+      position: relative;
+      overflow: hidden;
+  }
+  
+  .refresh-button::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #0070d2, #1589ee);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+  }
+  
+  .refresh-button:hover::after {
+      opacity: 0.1;
+  }
+  
+  /* Animation Classes */
+  .fade-in {
+      animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+      from { 
+          opacity: 0; 
+          transform: translateY(10px) translateZ(0);
+      }
+      to { 
+          opacity: 1; 
+          transform: translateY(0) translateZ(0);
+      }
+  }
+  
+  /* Responsive Design */
+  @media screen and (max-width: 768px) {
+      .permisphere-watermark {
+          padding: 1rem;
+      }
+      
+      .slds-grid.slds-wrap {
+          gap: 1rem;
+      }
+      
+      .user-search-section,
+      .permission-type-section {
+          padding: 1rem;
+      }
+  }
+  
+  .refresh-container {
+    display: inline-block;
+    padding: 5px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    position: relative;
+    background: white;
+    border-radius: 50%;
+    padding: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+  }
+  
+  .refresh-container:hover {
+    background-color: #eaeaea;
+  }
+  
+  .refresh-icon {
+    transition: transform 0.5s ease;
+  }
+  
+  .refresh-container:hover .refresh-icon {
+    transform: rotate(360deg);
+  }
+  
+  .refresh-text {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 5px;
+    padding: 2px 8px;
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 1; /* Keep the text visible */
+    visibility: hidden; /* Keep the text visible */
+  }
+  .refresh-container:hover .refresh-text {
+    opacity: 1; 
+    visibility: visible;
+  }
+  .slds-modal__header {
+      background-color:var(--lwc-brandPrimary);
+      color: white;
+  }
+  
+  /* Adjust icon size */
+  .slds-media__figure lightning-icon {
+      --sds-c-icon-width: 1.25rem;
+      --sds-c-icon-height: 1.25rem;
+  }
+  
+  /* Add theme color variable to root container */
+  :host {
+      --pa-primary-color: var(--lwc-brandPrimary);
+      --pa-background-color: var(--lwc-colorBackground);
+      --pa-text-color: var(--lwc-colorTextDefault);
+      --pa-border-radius: 0.25rem;
+      --pa-transition: all 0.2s ease;
+  }
+  
+  /* Update existing styles to use theme color */
+  .slds-button_brand {
+      background-color: var(--pa-primary-color);
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+  }
+  
+  .slds-button_brand:hover {
+      background-color: var(--pa-primary-color);
+      filter: brightness(1.1);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .slds-button_brand:disabled {
+      background: #c9c9c9;
+      transform: none;
+      cursor: not-allowed;
+  }
+  
+  /* Modal header */
+  .slds-modal__header {
+      background-color: var(--pa-primary-color);
+      color: white;
+      transition: background-color 0.3s ease;
+  }
+  
+  .slds-modal__title {
+      color: white;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Links and interactive elements */
+  .themed-link {
+      color: var(--pa-primary-color);
+      transition: color 0.2s ease;
+  }
+  
+  .themed-link:hover {
+      color: var(--pa-primary-color);
+      filter: brightness(0.9);
+  }
+  
+  /* Selected items */
+  .selected-item {
+      border: 2px solid var(--pa-primary-color);
+      border-radius: 0.25rem;
+  }
+  
+  .selected-item:hover {
+      background-color: #eef1f6;
+      border-color: var(--pa-primary-color);
+  }
+  
+  /* Icons */
+  .themed-icon {
+      --sds-c-icon-color-foreground-default: var(--pa-primary-color);
+  }
+  
+  /* Progress indicators */
+  .progress-bar {
+      background-color: var(--pa-primary-color);
+  }
+  
+  /* Tabs */
+  .slds-tabs_default__item.slds-is-active::after {
+      background-color: var(--pa-primary-color);
+  }
+  
+  .slds-tabs_default__item:hover::after {
+      background-color: var(--pa-primary-color);
+      filter: opacity(0.7);
+  }
+  
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+      .slds-modal__header {
+          background-color: var(--pa-primary-color);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+  
+      .themed-link {
+          color: var(--pa-primary-color);
+      }
+  
+      .selected-item {
+          border-color: var(--pa-primary-color);
+          background: rgba(255, 255, 255, 0.05);
+      }
+  
+      .selected-item:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: var(--pa-primary-color);
+      }
+  }
+  
+  /* Improve performance with hardware acceleration */
+  .permisphere-watermark {
+      transform: translateZ(0);
+      will-change: transform;
+      backface-visibility: hidden;
+  }
+  
+  /* Improve accessibility focus states */
+  .refresh-container:focus-visible {
+      outline: 2px solid var(--pa-primary-color);
+      outline-offset: 2px;
+  }
+  
+  /* Add prefers-reduced-motion support */
+  @media (prefers-reduced-motion: reduce) {
+      .refresh-icon,
+      .fade-in,
+      .slds-fade-in-open {
+          animation: none;
+          transition: none;
+      }
+  }

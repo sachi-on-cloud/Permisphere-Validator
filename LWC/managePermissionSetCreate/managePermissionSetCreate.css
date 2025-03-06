@@ -1,0 +1,126 @@
+/* Use CSS custom properties for better maintainability */
+:host {
+    --spacing-small: 0.5rem;
+    --spacing-medium: 1rem;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+    --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Improve grid layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-small);
+    container-type: inline-size;
+}
+
+/* Add focus styles for accessibility */
+.user-highlight {
+    padding: var(--spacing-small);
+    border-radius: var(--border-radius);
+    transition: background-color var(--transition-speed) ease;
+}
+
+.user-highlight:focus-visible {
+    outline: 2px solid var(--lwc-colorBorderBrand);
+    outline-offset: 2px;
+}
+
+/* Improve button styling */
+.slds-button {
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
+    box-shadow: var(--shadow-small);
+}
+
+/* Add responsive design */
+@container (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Add print styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+}
+
+.grid-item {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+.no-gap {
+    margin: 0;
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.selected-user {
+    background-color: #f8f8f8;
+    border: 2px solid #505050;
+}
+
+.selected-user:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.fixed-buttons {
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.user-highlight:hover {
+    background-color: #e0e0e0;
+}
+
+.buttonColor {
+    display: inline-flex;
+    align-items: center;
+    row-gap: 1.5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3.5px;
+    padding-bottom: 3.5px;
+    border-radius: 10%;
+    font-size: small;
+    font-weight: bold;
+    border: 0px;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+/* Enhanced Button Styling */
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}

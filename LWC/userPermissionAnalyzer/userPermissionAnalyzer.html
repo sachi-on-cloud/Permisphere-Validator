@@ -1,0 +1,307 @@
+<template>
+    <div class="user-permission-analyzer" role="region" aria-label="User Permission Settings">
+      <template if:false={isUserPerm}>
+        <div class="empty-state" role="alert">
+          <h2 class="empty-state__heading">No User Permissions Found</h2>
+        </div>
+      </template>
+      <template if:true={isUserPerm}>
+        <template if:true={enableHelpText}>
+          <div class="help-text-container" role="note">
+            <h6 class="help-text">
+              Click on Info Icon 
+              <lightning-button-icon 
+                icon-name="utility:info" 
+                disabled 
+                variant="bare" 
+                size="x-small"
+                aria-label="Information icon">
+              </lightning-button-icon>
+              to view permission origin
+            </h6>
+          </div>
+        </template>
+        <div style="margin-right:17px; position:sticky; top:0px; z-index:10; margin-bottom:5px; display:flex;justify-content:space-between;">
+          <div class="search-container">
+            <lightning-input 
+              label="Search User Permissions"
+              type="search"
+              value={searchUserPermKey}
+              onchange={handleSearchKeyChange}
+              class="search-input"
+              aria-controls="permission-list">
+            </lightning-input>
+          </div>
+          <template if:true={isEditMode}>
+            <div style="display:flex;gap:10px">
+              <button class="slds-button slds-button_neutral" name="User Update Cancel" onclick={handleUserCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" name="User Update" onclick={handleUpdatePermissionSet} disabled={isUpdateDisabled}> Update </button>
+            </div>
+          </template>
+        </div>
+        <div style="max-height: 300px; overflow-y:auto;">
+          <template if:true={hasUser}>
+            <div class="table-container" role="table" aria-label="User Permissions">
+              <div class="table-header" role="rowgroup">
+                <div class="grid-container" role="row">
+                  <div class="grid-item" role="columnheader">Permission Name</div>
+                  <div class="grid-item" role="columnheader">Enabled</div>
+                  <template if:true={enableMute}>
+                    <div class="grid-item" role="columnheader">Muted</div>
+                  </template>
+                </div>
+              </div>
+              <div style="background:white;">
+                <template for:each={filteredUserPermList} for:item="systemPermission">
+                  <div class="grid-container" key={systemPermission.fieldName}>
+                    <div class="grid-item">{systemPermission.fieldLabel}</div>
+                    <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                      <template if:false={enableMute}>
+                        <lightning-input style="display:flex;justify-content:end;" type="checkbox" checked={systemPermission.fieldValue} name={systemPermission.fieldName} data-field="Enabled" onchange={handleSystemPermissionChangePS} disabled={disabledUserEdit}></lightning-input>
+                      </template>
+                      <template if:true={enableMute}>
+                        <lightning-input style="display:flex;justify-content:end;" type="checkbox" checked={systemPermission.fieldValue} name={systemPermission.fieldName} disabled data-field="Enabled"></lightning-input>
+                      </template>
+                      <template if:true={enableHelpText}>
+                        <template if:true={systemPermission.fieldValue}>
+                          <lightning-button-icon class="popover-container" style="margin-left: -10px;display:flex;width:fit-content;" variant="bare" icon-name="utility:info" size="x-small" name={systemPermission.fieldName} onclick={handleHelpText}></lightning-button-icon>
+                        </template>
+                      </template>
+                      <template if:true={hasEditAccess}>
+                        <template if:false={isEditMode}>
+                          <div style="display:flex;justify-content:end;margin-right:5px;">
+                            <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleUserEdit} variant="bare" size="small"></lightning-button-icon>
+                          </div>
+                        </template>
+                      </template>
+                    </div>
+                    <template if:true={enableMute}>
+                      <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;">
+                        <lightning-input style="display:flex;justify-content:end;" type="checkbox" checked={systemPermission.fieldValueMute} name={systemPermission.fieldName} data-field="Muted" onchange={handleSystemPermissionChangeMutePS} disabled={disabledUserEdit}></lightning-input>
+                        <template if:false={isEditMode}>
+                          <div style="display:flex;justify-content:end;margin-right:5px;">
+                            <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleUserEdit} variant="bare" size="small"></lightning-button-icon>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+      <template if:true={showPopOver}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header" style="display:flex;justify-content:space-between;">
+              <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">Permission Origin</h1>
+              <button class="slds-button slds-button_icon slds-button_icon-small slds-popover__close close-button" title="Close dialog" onclick={handleClosePopover}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close dialog</span>
+              </button>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+              <template if:true={isProfile}>
+                <div>
+                  <h4 class="slds-text-heading_medium">Profile</h4>
+                  <p class="slds-m-left_medium">{profileName}</p>
+                </div>
+              </template>
+              <template if:true={isPermSet}>
+                <template if:true={isProfile}>
+                  <hr class="slds-m-vertical_medium" />
+                </template>
+                <div>
+                  <h4 class="slds-text-heading_medium">Permission Sets</h4>
+                  <template for:each={permSetName} for:item="perms">
+                    <p key={perms} class="slds-m-left_medium">{perms}</p>
+                  </template>
+                </div>
+              </template>
+              <template if:true={isPermSetGrp}>
+                <template if:true={isProfile}>
+                  <hr class="slds-m-vertical_medium" />
+                </template>
+                <template if:false={isProfile}>
+                  <template if:true={isPermSet}>
+                    <hr class="slds-m-vertical_medium" />
+                  </template>
+                </template>
+                <div>
+                  <h4 class="slds-text-heading_medium">Permission Set Groups</h4>
+                  <template for:each={permSetGrpName} for:item="group">
+                    <p key={group} class="slds-m-left_medium">{group}</p>
+                  </template>
+                </div>
+              </template>
+            </div>
+            <div class="slds-modal__footer"></div>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+      </template>
+      <!-- User Table -->
+      <template if:true={isUsersTable}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-17">
+              <lightning-datatable key-field="Id" data={userValue} columns={userColumn} class="slds-p-around_xx-small remove-underline custom-datatable" hide-checkbox-column="true" sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting}></lightning-datatable>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral" aria-label="Cancel and close" name='user cancel' onclick={handleUserCancel}>Cancel</button>
+            </div>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+      </template>
+      <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading" class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <template if:true={isProfileAffect}>
+              <button style="background: white;margin-right: 10px;" class="slds-button slds-button_icon slds-modal__close" name="profile cancel" onclick={handleUserCancel}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" size="small" aria-label="Cancel" name="profile cancel" onclick={handleUserCancel}></lightning-icon>
+                <span class="slds-assistive-text">Cancel and close</span>
+              </button>
+            </template>
+            <template if:true={isProfileAffectUser}>
+              <button style="background: white;margin-right: 10px;" class="slds-button slds-button_icon slds-modal__close" name="profile affect cancel" onclick={handleUserCancel}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" size="small" aria-label="Cancel" name="profile affect cancel" onclick={handleUserCancel}></lightning-icon>
+                <span class="slds-assistive-text">Cancel and close</span>
+              </button>
+            </template>
+            <!-- Modal Header -->
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">
+                <template if:true={isProfileAffect}> Profile Level - Update </template>
+                <template if:true={isPermissionSetAffect}> Permissionset Level - Update </template>
+                <template if:true={isProfileAffectUser}> Profile Level With Affected Objects - Update </template>
+                <template if:true={isPermissionSetAffectUser}> Permissionset Level With Affected Objects - Update </template>
+                <template if:true={isPermissionSetGroupAffect}> Permissionsetgroup Level - Update </template>
+                <template if:true={isPermissionSetGroupAffectUser}> Permissionsetgroup Level With Affected Objects - Update </template>
+              </h1>
+            </div>
+            <!-- Modal Content -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-18">
+              <span style="display:flex; flex-direction: column; align-items: center;">
+                <!-- Profile Affect -->
+                <template if:true={isProfileAffect}>
+                  <span> This will affect {userValueLength} Users of the Profile <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+                <!-- Permission Set Affect -->
+                <template if:true={isPermissionSetAffect}>
+                  <span> This will affect {userValueLength} Users of the Permission Set <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+                <!-- Profile Affect Object -->
+                <template if:true={isProfileAffectUser}>
+                  <span>
+                    <b>{permissionArrayString}</b> These User Permissions will be impacted by <b>{requiredPermissionArrayString}</b> after saving the records and will also affect {userValueLength} Users of the Profile <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+                <!-- Permission Set Affect Object -->
+                <template if:true={isPermissionSetAffectUser}>
+                  <span>
+                    <b>{permissionArrayString}</b> These User Permissions will be impacted by <b>{requiredPermissionArrayString}</b> after saving the records and will also affect {userValueLength} Users of the Permission Set <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+                <!-- Permission Set Group Affect -->
+                <template if:true={isPermissionSetGroupAffect}>
+                  <span> This will affect {userValueLength} Users of the Permission Set Group <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+                <!-- Permission Set Group Affect Object -->
+                <template if:true={isPermissionSetGroupAffectUser}>
+                  <span>
+                    <b>{permissionArrayString}</b> These User Permissions will be impacted by <b>{requiredPermissionArrayString}</b> after saving the records and will also affect {userValueLength} Users of the Permission Set Group <b>{userLabel}</b>. <a onclick={handleOpenUserModal} style="margin-left: 10px; text-decoration: underline;">View Users</a>
+                  </span>
+                  <br />
+                  <span>Are you sure you want to change it?</span>
+                </template>
+              </span>
+            </div>
+            <!-- Modal Footer -->
+            <div class="slds-modal__footer">
+              <!-- Profile Affect -->
+              <template if:true={isProfileAffect}>
+                <button class="slds-button slds-button_neutral" aria-label="Create PermissionSet" name="Create PermissionSet" onclick={handleCreatePermissionSet} disabled={isCreatePermSet}> Create PermissionSet </button>
+                <button class="slds-button slds-button_neutral" aria-label="Existing PermissionSets" name="Existing PermissionSets" onclick={handleExistingPermissionSet} disabled={isCreatePermSet}> Modify Existing PermissionSet </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile Confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+              <!-- Permission Set Affect -->
+              <template if:true={isPermissionSetAffect}>
+                <button class="slds-button slds-button_neutral" aria-label="Cancel" name="profile cancel" onclick={handleUserCancel}> Cancel </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile Confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+              <!-- Profile Affect Object -->
+              <template if:true={isProfileAffectUser}>
+                <button class="slds-button slds-button_neutral" aria-label="Create PermissionSet" name="Create PermissionSet" onclick={handleCreatePermissionSet} disabled={isCreatePermSet}> Create PermissionSet </button>
+                <button class="slds-button slds-button_neutral" aria-label="Existing PermissionSets" name="Existing PermissionSets" onclick={handleExistingPermissionSet} disabled={isCreatePermSet}> Modify Existing PermissionSet </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile affect confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+              <!-- Permission Set Affect Object -->
+              <template if:true={isPermissionSetAffectUser}>
+                <button class="slds-button slds-button_neutral" aria-label="Cancel" name="profile affect cancel" onclick={handleUserCancel}> Cancel </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile affect confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+              <!-- Permission Set Group Affect -->
+              <template if:true={isPermissionSetGroupAffect}>
+                <button class="slds-button slds-button_neutral" aria-label="Cancel" name="persetgrp cancel" onclick={handleUserCancel}> Cancel </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="persetgrp confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+              <!-- Permission Set Group Affect Object -->
+              <template if:true={isPermissionSetGroupAffectUser}>
+                <button class="slds-button slds-button_neutral" aria-label="Cancel" name="persetgrp affect object cancel" onclick={handleUserCancel}> Cancel </button>
+                <button class="slds-button slds-button_brand" aria-label="Confirm" name="persetgrp affect object confirm" onclick={handleConfirm}> Confirm </button>
+              </template>
+            </div>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+      </template>
+      <template if:true={isExistingPermissionSet}>
+        <section style="z-index:9999999;" role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-03" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header" style="display:flex;justify-content:space-between;">
+              <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate" tabindex="-1">Existing PermissionSets</h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+              <template for:each={permSetList} for:item="permSet">
+                <div key={permSet.Id}>
+                  <div style="display:flex; justify-content:space-between;">
+                    <span>{permSet.Label}</span>
+                    <lightning-button data-id={permSet.Id} variant="label-hidden" label='Add' placeholder="Add" onclick={handleUpdateExistingPermissionSet}></lightning-button>
+                  </div>
+                  <hr class="slds-m-vertical_medium" />
+                </div>
+              </template>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="Existing PermissionSet cancel" onclick={handleUserCancel}> Cancel </button>
+            </div>
+          </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:999999;" role="presentation"></div>
+      </template>
+      <template if:true={isNewPermSet}>
+        <c-manage-permission-set-create update-type='User' updated-user={userPermUpdate} selected-user-id={userId} onclosecreatepermset={closeCreateModal} onnewcreatedpermset={handleCustomEvent}></c-manage-permission-set-create>
+      </template>
+      <template if:true={showSpinner}>
+        <div class="exampleHolder">
+          <lightning-spinner class="slds-is-fixed" alternative-text="Loading" size="large" style="z-index: 99999999;"></lightning-spinner>
+        </div>
+      </template>
+    </div>
+  </template>

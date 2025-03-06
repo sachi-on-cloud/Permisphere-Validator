@@ -1,0 +1,602 @@
+.custom-combobox {
+    width: 300px;
+    justify-content: end;
+    padding-left: 10px;
+}
+
+.custom-datatable .slds-scrollable_y {
+    overflow-y: hidden;
+}
+
+.slds-icon-text-success {
+    fill: var(--theme-color);
+}
+
+.slds-icon-text-error {
+    fill: red;
+}
+
+.slds-notify_alert {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    background-color: #ececec;
+    color: #080707;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.slds-theme_info {
+    background-color: #ececec;
+}
+
+.scrollable-section {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    border: 1px solid #d8dde6;
+}
+
+.custom-accordion {
+    border: 1px solid #d8dde6;
+    border-radius: 5px;
+    margin: 1rem;
+}
+
+.custom-accordion-section {
+    padding: 1rem;
+}
+
+.custom-accordion-heading {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.scrollable-section {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.custom-accordion-item {
+    border-top: 1px solid #d8dde6;
+    padding: 0.5rem 0;
+}
+
+.custom-accordion-summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.custom-accordion-label {
+    font-size: 1rem;
+}
+
+.custom-accordion-icon {
+    font-size: 1.25rem;
+    padding-right: 0.5rem;
+}
+
+.custom-accordion-content {
+    padding: 1rem;
+}
+
+.nested-accordion {
+    border-top: 1px solid #d8dde6;
+    margin-top: 1rem;
+}
+
+.nested-accordion-summary {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.5rem 0;
+}
+
+.nested-accordion-label {
+    font-size: 1rem;
+}
+
+.nested-accordion-icon {
+    font-size: 1.25rem;
+    padding-right: 0.5rem;
+}
+
+.nested-accordion-content {
+    padding: 0.5rem 1rem;
+}
+
+.nested-accordion-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.nested-accordion-list-item {
+    padding: 0.5rem 0;
+}
+
+.fixed-buttons {
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.combobox-custom-width {
+    --lwc-sizeXSmall: 40rem !important;
+
+}
+
+.profile-details-box {
+    padding: 16px;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 16px;
+}
+
+.pagination-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.scrollable-y {
+    max-height: 100;
+    overflow-y: auto;
+    display: block;
+}
+
+.field-line {
+    margin: 0;
+    border: none;
+    border-top: 1px solid #ccc;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 2fr));
+}
+
+.header-row {
+    display: contents;
+}
+
+.header-cell {
+    background-color: #f4f6f9;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.data-row {
+    display: contents;
+}
+
+.data-cell {
+    background-color: #ffffff;
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.object-name {
+    font-weight: bold;
+}
+
+.permissions-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1px;
+}
+
+.permission {
+    padding: 5px;
+    text-align: center;
+}
+
+.field-permission {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 1px;
+}
+
+.field-name {
+    text-align: left;
+    padding-left: 10px;
+}
+
+.scrollable {
+    max-height: 400px;
+    overflow-y: auto;
+    display: block;
+}
+
+.scrollable table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.scrollable th,
+.scrollable td {
+    white-space: nowrap;
+}
+
+.grid-container-sys {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.grid-item {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+.no-gap {
+    margin: 0;
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.selected-user {
+    background-color: #d3d3d3;
+    border: 2px solid #505050;
+}
+
+.selected-user:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.user-highlight {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.user-highlight:hover {
+    background-color: #f3f3f3;
+}
+
+.buttonColor {
+    display: inline-flex;
+    align-items: center;
+    row-gap: 1.5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3.5px;
+    padding-bottom: 3.5px;
+    border-radius: 10%;
+    font-size: small;
+    font-weight: bold;
+    border: 0px;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.permisphere-watermark {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f0f4f8 0%, #ffffff 100%);
+}
+
+/* Background overlay with blur */
+.permisphere-watermark::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/resource/Permisphere') center/cover no-repeat fixed;
+    opacity: 0.04;
+}
+
+/* Enhanced component styles with transparency */
+.slds-card {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.slds-tabs_scoped__content {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+/* Make datatable more transparent */
+.slds-table {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Adjust input fields for better visibility */
+lightning-input, 
+lightning-combobox,
+lightning-textarea {
+    --slds-c-input-color-background: rgba(255, 255, 255, 0.8);
+}
+
+/* Enhanced Modal Styles */
+.slds-modal__container {
+    max-width: 70rem;
+    width: 95%;
+}
+
+.slds-modal__content {
+    overflow: initial;
+    overflow-y: auto;
+    max-height: 65vh;
+}
+
+/* Enhanced Layout Styles */
+.slds-grid.slds-wrap {
+    margin: 0 -0.75rem;
+}
+
+.slds-col {
+    padding: 0.75rem;
+}
+
+/* Enhanced Table Styles */
+.custom-datatable {
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Button Styles */
+.fixed-buttons {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0.5rem;
+}
+
+/* Enhanced Search Input Styles */
+.user-label {
+    margin-bottom: 1rem;
+}
+
+lightning-input.search-field {
+    max-width: 300px;
+}
+
+/* Enhanced Grid Layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* Enhanced Section Styles */
+.section-container {
+    background: #ffffff;
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Enhanced Alert Styles */
+.slds-notify_alert {
+    margin: 1rem 0;
+    border-radius: 0.25rem;
+    background-color: #f3f3f3;
+    border: 1px solid #e5e5e5;
+}
+
+/* Enhanced Combobox Styles */
+.combobox-custom-width {
+    min-width: 200px;
+    max-width: 100%;
+}
+
+/* Enhanced Scrollable Areas */
+.scrollable-section {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #d8dde6;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+}
+
+/* Enhanced Modal Header */
+.slds-modal__header {
+    border-bottom: 2px solid #d8dde6;
+    padding: 1rem 1.5rem;
+    background-color: var(--theme-color);
+    color: white;
+}
+
+/* Enhanced Modal Footer */
+.slds-modal__footer {
+    border-top: 2px solid #d8dde6;
+    padding: 0.75rem 1rem;
+}
+
+/* Enhanced Permission Set Group Layout */
+.permission-set-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Enhanced User Selection Area */
+.user-selection-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Enhanced Watermark Container */
+.permisphere-watermark {
+    background-blend-mode: overlay;
+    /* background-color: rgba(255, 255, 255, 0.95); */
+}
+
+/* Enhanced Content Layout */
+.content-wrapper {
+    position: relative;
+    z-index: 2;
+    padding: 1.5rem;
+}
+
+/* Enhanced Button Groups */
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Enhanced Form Fields */
+.form-field {
+    margin-bottom: 1rem;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+/* Enhanced Responsive Layout */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .user-selection-area {
+        grid-template-columns: 1fr;
+    }
+    
+    .slds-modal__container {
+        margin: 0 1rem;
+        max-width: calc(100% - 2rem);
+    }
+}
+
+/* Enhanced Button Styling */
+.slds-button {
+    padding: 0.200rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--theme-color);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.slds-button_brand:hover {
+    background-color: var(--theme-color);
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}
+
+.selected-user {
+    /* background-color: lightgrey; */
+    border: 2px solid var(--theme-color);
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.selected-user:hover {
+    background-color: #eef1f6;
+    border-color: var(--theme-color);
+    cursor: pointer;
+}
+
+/* Additional styles for enhanced layout */
+.available-permissionset{
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.available-permissionset:hover {
+    background-color: #f3f3f3;
+}
+
+/* Add theme color variable to root container */
+:host {
+    --theme-color: var(--lwc-brandPrimary, #0070d2);
+    --spacing-small: 0.5rem;
+    --spacing-medium: 1rem;
+    --border-radius: 0.25rem;
+    --transition-speed: 0.3s;
+}
+
+/* Update any other color references */
+.footer-link {
+    color: var(--theme-color);
+}
+
+.footer-link:hover {
+    color: var(--theme-color);
+    filter: brightness(0.9);
+}
+
+/* Improve performance with hardware acceleration */
+.permisphere-container {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Improve modal animations */
+.slds-modal {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+}
+
+/* Improve accessibility focus states */
+.slds-button:focus-visible {
+    outline: 2px solid var(--theme-color);
+    outline-offset: 2px;
+}
+
+/* Add print styles */
+@media print {
+    .no-print {
+        display: none;
+    }
+    
+    .permisphere-watermark::before {
+        display: none;
+    }
+}
+
+/* Improve responsive design */
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .slds-modal__container {
+        margin: 0 var(--spacing-small);
+        max-width: calc(100% - var(--spacing-medium));
+    }
+}

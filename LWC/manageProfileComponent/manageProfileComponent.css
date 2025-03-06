@@ -1,0 +1,96 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.grid-container-field {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 10px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.grid-item {
+    text-align: center;
+    padding: 5px;
+    border: 1px solid grey;
+}
+
+.grid-item-header {
+    text-align: center;
+    border: 1px solid grey;
+}
+
+.header {
+    font-weight: bold;
+    background-color: #f4f6f9;
+}
+
+.buttonColor {
+    display: inline-flex;
+    align-items: center;
+    row-gap: 1.5px;
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-top: 3.5px;
+    padding-bottom: 3.5px;
+    border-radius: 10%;
+    font-size: small;
+    font-weight: bold;
+    border: 0px;
+}
+
+.no-gap {
+    margin: 0;
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.no-gap-header {
+    margin: 0;
+    background-color: #f3f3f3;
+}
+
+
+.object-permissions {
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+/* Enhanced Button Styling */
+.slds-button {
+    padding: 0.200rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}

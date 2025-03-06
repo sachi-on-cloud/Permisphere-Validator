@@ -1,0 +1,150 @@
+<template>
+    <template if:false={showSpinner}>
+      <template if:true={showRecordType}>
+        <div class="record-type-manager" role="region" aria-label="Record Type Management">
+          <div class="search-container">
+            <lightning-input
+              label="Search Record Types"
+              aria-label="Search Record Types"
+              value={searchKey}
+              onchange={handleSearchKeyChange}
+              type="search"
+              class="search-input"
+            ></lightning-input>
+          </div>
+          <div class="record-type-list" role="grid" aria-label="Record Type Permissions">
+            <div class="grid-header" role="row">
+              <div role="columnheader" scope="col">Record Type</div>
+              <div role="columnheader" scope="col">Visible</div>
+              <template if:true={enabledDefault}>
+                <div role="columnheader" scope="col">Default</div>
+              </template>
+            </div>
+            <template if:true={hasRecType}>
+              <template for:each={filteredRecType} for:item="recType">
+                <div class="grid-container" key={recType.RecordType}>
+                  <div class="grid-item">{recType.label}</div>
+                  <template if:true={enableRecordTypeEdit}>
+                    <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;user-select:none;">
+                      <lightning-input style="display: flex; justify-content: end;" type="checkbox" name="Visible" data-name={recType.RecordType} onchange={handleRecTypePermChange} checked={recType.Visible} disabled={isEditRecTypeDisabled}></lightning-input>
+                      <template if:false={isEditRecTypeMode}>
+                        <div style="display:flex;justify-content:end;margin-right:5px;">
+                          <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleRecTypeEdit} variant="bare" size="small"></lightning-button-icon>
+                        </div>
+                      </template>
+                    </div>
+                    <template if:true={enabledDefault}>
+                      <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;user-select:none;">
+                        <lightning-input style="display: flex; justify-content: end;" type="checkbox" name="Default_x" data-name={recType.RecordType} onchange={handleRecTypePermChange} checked={recType.Default_x} disabled={isEditRecTypeDisabled}></lightning-input>
+                        <template if:false={isEditRecTypeMode}>
+                          <div style="display:flex;justify-content:end;margin-right:5px;">
+                            <lightning-button-icon icon-name="utility:edit" alternative-text="Edit" onclick={handleRecTypeEdit} variant="bare" size="small"></lightning-button-icon>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+                  </template>
+                  <template if:false={enableRecordTypeEdit}>
+                    <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;user-select:none;">
+                      <lightning-input style="display: flex; justify-content: end;" type="checkbox" name="Visible" data-name={recType.RecordType} onchange={handleRecTypePermChange} checked={recType.Visible} disabled></lightning-input>
+                    </div>
+                    <template if:true={enabledDefault}>
+                      <div class="grid-item" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-flow: column;user-select:none;">
+                        <lightning-input style="display: flex; justify-content: end;" type="checkbox" name="Default_x" data-name={recType.RecordType} onchange={handleRecTypePermChange} checked={recType.Default_x} disabled={isEditRecTypeDisabled}></lightning-input>
+                      </div>
+                    </template>
+                  </template>
+                </div>
+              </template>
+            </template>
+            <template if:false={hasRecType}>
+              <span style="display:flex;justify-content:start;">
+                <h2 style="font-size: 20px;">No RecordType Found</h2>
+              </span>
+            </template>
+          </div>
+        </div>
+      </template>
+      <template if:false={showRecordType}>
+        <div class="slds-box custom-box-style" style="display:flex;justify-content:center;margin-top:55px;">
+          <span style="display:flex;justify-content:center;">
+            <h2 style="font-size: 20px;">No Record Type Permissions Found</h2>
+          </span>
+        </div>
+      </template>
+    </template>
+    <template if:true={showSpinner}>
+      <div class="slds-align_absolute-center" style="height: 100%; background-color: #f3f3f3;">
+        <div class="">
+          <div class="slds-col">
+            <div class="slds-is-relative">
+              <div role="status" class="slds-spinner slds-spinner_medium">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top: 35px; font-weight: 600;" class="slds-col slds-p-left_small">
+            <span>Waiting to fetch RecordType Data</span>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template if:true={isModalOpen}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading" class="slds-modal slds-fade-in-open slds-modal_large">
+        <div class="slds-modal__container">
+          <!-- Modal Header -->
+          <div class="slds-modal__header">
+            <h1 id="modal-heading" class="slds-modal__title slds-hyphenate" tabindex="-1">
+              <!-- Conditional Title Rendering -->
+              <template if:true={isRecPro}> Affects Profile </template>
+              <template if:true={isRecDefPro}> Default Is Required! </template>
+              <template if:true={isRecPerSet}> Affects PermissionSet </template>
+            </h1>
+          </div>
+          <!-- Modal Content -->
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content">
+            <div style="display:flex; flex-direction: column; align-items: center;">
+              <!-- Profile Affect Section -->
+              <template if:true={isRecPro}>
+                <span> This will affect {totalUser} Users of the Profile <b>{profName}</b>. </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+              <!-- Default Record Type Required Section -->
+              <template if:true={isRecDefPro}>
+                <span> Setting Default RecordType is mandatory for Profile <b>{profName}</b>. </span>
+                <br />
+                <span>Please select the Default RecordType to save the changes.</span>
+              </template>
+              <!-- Permission Set Affect Section -->
+              <template if:true={isRecPerSet}>
+                <span> This will affect {totalUser} Users of the selected PermissionSet <b>{profName}</b>. </span>
+                <br />
+                <span>Are you sure you want to change it?</span>
+              </template>
+            </div>
+          </div>
+          <!-- Modal Footer -->
+          <div class="slds-modal__footer">
+            <!-- Footer for Profile Affect -->
+            <template if:true={isRecPro}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="profile cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="profile record confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+            <!-- Footer for Default Record Type Required -->
+            <template if:true={isRecDefPro}>
+              <button class="slds-button slds-button_neutral" aria-label="Ok" name="profile ok" onclick={handleCancel}> Confirm </button>
+            </template>
+            <!-- Footer for Permission Set Affect -->
+            <template if:true={isRecPerSet}>
+              <button class="slds-button slds-button_neutral" aria-label="Cancel" name="permission set cancel" onclick={handleCancel}> Cancel </button>
+              <button class="slds-button slds-button_brand" aria-label="Confirm" name="permission set confirm" onclick={handleConfirm}> Confirm </button>
+            </template>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+  </template>

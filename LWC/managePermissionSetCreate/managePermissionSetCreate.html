@@ -1,0 +1,164 @@
+<template>
+    <!--    CREATE FUNCTION FOR PERMISSION SET       -->
+    <!--1.FIRST MODAL IN CREATION(PERMISSION SET)-->
+    <div class="permission-set-create" role="region" aria-label="Create Permission Set">
+        <template if:true={isCreatePerSetClicked}>
+            <section 
+                role="dialog" 
+                aria-modal="true"
+                aria-labelledby="modal-heading"
+                class="slds-modal slds-fade-in-open">
+                
+                <form onsubmit={handleSubmit} class="slds-form">
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input
+                                label="Label"
+                                required
+                                value={createPermissionSetObj.Label}
+                                onchange={handlePermissionSetFieldValue}
+                                data-id="label"
+                                aria-describedby="labelHelp">
+                            </lightning-input>
+                            <div id="labelHelp" class="slds-form-element__help">
+                                Enter a unique label for the permission set
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                            <lightning-input label="API Name" required value={createPermissionSetObj.Name} onchange={handlePermissionSetFieldValue} data-id="apiName"></lightning-input>
+                        </div>
+                    </div>
+                    <lightning-textarea label="Description" value={createPermissionSetObj.Description} data-id="description" onchange={handlePermissionSetFieldValue}></lightning-textarea>
+                    <lightning-combobox label="License" placeholder="License" value={createPermissionSetObj.License} options={combinedLicenseValue} onchange={handleLicenseChange}></lightning-combobox>
+                    <div style="float:right" class="slds-p-around_medium">
+                        <lightning-input type="checkbox" label="Session Activation Required	" checked={createPermissionSetObj.hasActivationRequired} onchange={handleSessionChange}></lightning-input>
+                    </div>
+                </form>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open" style="z-index:9999" role="presentation"></div>
+        </template>
+    </div>
+    <!--2.SECOND MODAL IN CREATION(PERMISSION SET)-->
+    <template if:true={isCreatedNextforPermissionSet}>
+        <section role="dialog" style="z-index:999999" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Header -->
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Create a Permission Set</h2>
+                    <span>Add Users to {createPermissionSetObj.Label}</span>
+                </header>
+                <!-- Modal/Popup Body -->
+                <div class="slds-modal__content slds-p-around_medium">
+                    <div class="user-selection" role="group" aria-label="User Selection">
+                        <lightning-input
+                            type="search"
+                            label="Search Users"
+                            onchange={handleDebounceSearch}
+                            aria-controls="available-users-list">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-grid slds-m-top_medium">
+                        <div class="slds-col">
+                            <lightning-layout>
+                                <lightning-layout-item>
+                                    <div class="slds-text-title">Available Users({usersLength})</div>
+                                    <div class="slds-box slds-box_small slds-m-top_small slds-scrollable_y" style="height:300px;width:300px;cursor: pointer;">
+                                        <template if:true={hasAvailUser}>
+                                            <template for:each={filteredAvailableUser} for:item="set">
+                                                <div key={set.Id} class="slds-m-bottom_small slds-grid" onclick={handleSelectUserToAdd} data-id={set.Id}>
+                                                    <div class="slds-col slds-size_1-of-1 user-highlight" style="padding-left: 10px;">
+                                                        <span>{set.Name}</span>
+                                                        <div class="slds-text-body_small"> {set.profileName}.{set.userLicense}</div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </template>
+                                        <template if:false={hasAvailUser}>
+                                            <span style="display:flex;justify-content:start;">
+                                                <h2 style="font-size:15px">No Users Found</h2>
+                                            </span>
+                                        </template>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                        <div class="slds-col  slds-align-middle slds-p-horizontal_medium">
+                            <lightning-button icon-name="utility:right" size="large" variant="netural" onclick={handleToAddSelectedUsersButton}></lightning-button>
+                            <div class="slds-m-vertical_small"></div>
+                            <lightning-button icon-name="utility:left" size="large" variant="netural" onclick={handleToRemoveSelectedUsersButton}></lightning-button>
+                        </div>
+                        <div class="slds-col">
+                            <lightning-layout>
+                                <lightning-layout-item>
+                                    <div class="slds-text-title">Selected Users({selectedusersLength})</div>
+                                    <div class="slds-box slds-m-top_small slds-scrollable_y" style="height:300px;width:300px;cursor: pointer;">
+                                        <template for:each={selectedusers} for:item="set">
+                                            <div key={set.Id} class="slds-m-bottom_small slds-grid" onclick={handleSelectUserToRemove} data-id={set.Id}>
+                                                <div class="slds-col slds-size_1-of-1 user-highlight" style="padding-left: 10px;">
+                                                    <span>{set.Name}</span>
+                                                    <div class="slds-text-body_small"> {set.profileName}.{set.userLicense}</div>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal/Popup Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button style="float:left;" label="Back" onclick={handleBackforPermissionSet}></lightning-button>
+                    <span style="gap:5px">
+                        <lightning-button label="Next" variant="brand" onclick={handleclickNextforPermissionSet}></lightning-button>
+                    </span>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9999"></div>
+    </template>
+    <!--3.THIRD MODAL IN CREATION(PERMISSION SET)-->
+    <template if:true={isCreateSaveforPermissionSet}>
+        <section role="dialog" style="z-index:999999" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <h1 id="modal-heading-32" class="slds-modal__title slds-hyphenate" tabindex="-1">Create a Permission Set </h1>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-35">
+                    <div class="slds-notify slds-notify_alert slds-theme_info">
+                        <span class="slds-assistive-text">Info</span>
+                        <lightning-icon icon-name="utility:warning" size="small" alternative-text="Info"></lightning-icon>
+                        <span class="slds-m-left_x-small">After you save your changes, the users associated with this group are updated and the Permission Set status reflects the current state. When the process is completed, the status changes to Updated. To see the latest status, refresh your browser.</span>
+                    </div>
+                    <div class="slds-grid slds-wrap slds-gutters">
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                            <lightning-input label="Label" value={createPermissionSetObj.Label} disabled></lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                            <lightning-input label="API Name" value={createPermissionSetObj.Name} disabled></lightning-input>
+                        </div>
+                    </div>
+                    <lightning-textarea label="Description" value={createPermissionSetObj.Description} disabled></lightning-textarea>
+                    <div class="container">
+                        <div class="grid-header">Assigned Users for Permission Set</div>
+                        <template for:each={selectedusers} for:item="set">
+                            <div class="grid-container" key={set.Id}>
+                                <div class="grid-item">{set.Name}</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="slds-modal__footer">
+                    <button class="slds-button slds-button_neutral" onclick={handleNextCloseModalforPermissionSet}>Back</button>
+                    <button class="slds-button slds-button_brand slds-m-left_medium" onclick={handleCreateforPerSet}>Finish</button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" style="z-index:9999" role="presentation"></div>
+    </template>
+    <template if:true={showSpinner}>
+        <div class="exampleHolder">
+            <lightning-spinner class="slds-is-fixed" alternative-text="Loading" size="large" style="z-index:99999999"></lightning-spinner>
+        </div>
+    </template>
+</template>

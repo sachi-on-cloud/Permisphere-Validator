@@ -1,0 +1,38 @@
+.slds-section__title {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.slds-box {
+    padding: 1rem;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+/* Enhanced Button Styling */
+.slds-button {
+    padding: 0.200rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}

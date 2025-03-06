@@ -1,0 +1,504 @@
+/* .welcome-container {
+    padding: 20px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.resources-section,
+.help-section,
+.community-section {
+    text-align: left;
+    max-width: 600px;
+}
+
+.welcome-section {
+    text-align: left;
+    max-width: 1000px;
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin: 10px 0;
+}
+
+a {
+    color: #0070d2;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.selected-user {
+    background-color: #f8f8f8;
+    border: 2px solid #505050;
+}
+
+.selected-user:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.slds-theme_success {
+    background-color: #b6e9c3;
+    color: #228b22;
+}
+
+.slds-theme_error {
+    background-color: #f4c7c3;
+    color: #b22222;
+}
+
+.user-highlight:hover {
+    background-color: #e0e0e0;
+}
+
+.cursor-default {
+    cursor: default;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+} */
+ 
+.cursor-default {
+    cursor: default;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Modern Container with Gradient Background */
+.welcome-container {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+    background: linear-gradient(135deg, #f6f7f9 0%, #ffffff 100%);
+    overflow: hidden;
+    --theme-color: var(--lwc-brandPrimary, #0070d2);
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Subtle Background Pattern */
+.welcome-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('/resource/Permisphere') center/cover no-repeat fixed;
+    opacity: 0.05;
+    z-index: 0;
+}
+
+/* Main Content Layout */
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Header Styling */
+.app-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    color: #16325c;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 12px 6px rgba(0, 0, 0, 0.1);
+    background-color: var(--lwc-brandPrimary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Main Content Area */
+.main-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.action-description {
+    font-size: 1.25rem;
+    color: #444;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Enhanced Button Styling */
+.slds-button {
+    padding: 0.200rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* Modern Footer Styling */
+.footer-card {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 2rem;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: var(--theme-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.footer-link:hover {
+    background: rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
+}
+
+.footer-link lightning-icon {
+    --sds-c-icon-color-foreground-default: var(--theme-color);
+}
+
+/* Theme Picker Styling */
+.theme-section {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-picker {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.theme-picker:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+
+.theme-picker-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.color-picker-input {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .welcome-container {
+        padding: 1rem;
+    }
+
+    .content-wrapper {
+        padding: 1rem;
+    }
+
+    .app-title {
+        font-size: 2rem;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .slds-button {
+        width: 100%;
+    }
+
+    .footer-content {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 0;
+    }
+
+    .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .footer-link {
+        padding: 0.5rem;
+    }
+
+    .theme-section {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Accessibility Improvements */
+:focus {
+    outline: 2px solid #0070d2;
+    outline-offset: 2px;
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+
+/* List Items */
+.user-highlight {
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+}
+
+.user-highlight:hover {
+    background-color: #f3f3f3;
+}
+
+.selected-user {
+    /* background-color: lightgrey; */
+    border: 2px solid var(--lwc-brandPrimary);
+    border-radius: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.selected-user:hover {
+    background-color: #eef1f6;
+    border-color: var(--lwc-brandPrimary);
+    cursor: pointer;
+}
+
+/* Additional styles for enhanced layout */
+.profile-item,
+.permission-item {
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.profile-item:hover,
+.permission-item:hover {
+    background-color: #f3f3f3;
+}
+
+/* Modal Theme Styling */
+.custom-modal-theme {
+    --theme-color: var(--lwc-brandPrimary, #0070d2);
+}
+
+.custom-modal-theme .slds-modal__header {
+    background-color: var(--theme-color);
+    color: white;
+    transition: background-color 0.3s ease;
+}
+
+.custom-modal-theme .slds-modal__title {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Button States */
+.custom-modal-theme .slds-button_brand {
+    transition: all 0.3s ease;
+}
+
+.custom-modal-theme .slds-button_brand:not(:disabled) {
+    background-color: var(--theme-color);
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal-theme .slds-button_brand:disabled {
+    background-color: #c9c9c9;
+    border: none;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.custom-modal-theme .slds-button_brand:not(:disabled):hover {
+    background-color: var(--theme-color);
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .welcome-container {
+        background: linear-gradient(135deg, #1a1c21 0%, #2a2c35 100%);
+    }
+
+    .app-title {
+        background: linear-gradient(45deg, #ffffff, #82b1ff);
+        -webkit-background-clip: text;
+    }
+
+    .action-container {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .action-description {
+        color: #ffffff;
+    }
+
+    .footer-card {
+        background: rgba(30, 30, 30, 0.95);
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer-link {
+        color: var(--theme-color);
+    }
+
+    .footer-link:hover {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .theme-picker {
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .theme-picker:hover {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    .theme-picker-label {
+        color: #999;
+    }
+}
+
+/* Other themed elements */
+.theme-dependent {
+    color: var(--theme-color);
+}
+
+/* Use CSS custom properties for theming */
+:host {
+    --sc-primary-color: var(--lwc-brandPrimary, #0070d2);
+    --sc-background: var(--lwc-colorBackground, #ffffff);
+    --sc-text-color: var(--lwc-colorTextDefault, #333333);
+    --sc-transition: all 0.3s ease;
+}
+
+/* Improve accessibility focus states */
+.slds-button:focus-visible {
+    outline: 2px solid var(--sc-primary-color);
+    outline-offset: 2px;
+}
+
+/* Add prefers-reduced-motion support */
+@media (prefers-reduced-motion: reduce) {
+    .fade-in,
+    .slds-button,
+    .footer-link {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* Optimize modal performance */
+.slds-modal__container {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+}

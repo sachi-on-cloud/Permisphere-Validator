@@ -1,0 +1,281 @@
+<template>
+    <div class="permisphere-watermark" role="main">
+      <lightning-tabset variant="scoped" active-tab-value={activeTabPrimary} class="custom-tabset-label" aria-label="Permission Management Tabs">
+        <lightning-tab label="User" value="User" class="custom-tab-label" onactive={handleUserTab}>
+          <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-4 slds-p-right_medium">
+              <div class="search-container">
+                <lightning-input label="Search User" aria-label="Search for users" type="search" value={searchusername} onchange={handleUser} oncommit={handleUserClear} placeholder="Search User" class="user-label"></lightning-input>
+                <template if:true={isUserObject}>
+                  <div class="search-results show">
+                    <ul class="slds-listbox slds-listbox_vertical" role="listbox">
+                      <template if:true={username.length}>
+                        <template for:each={username} for:item="user">
+                          <li key={user.Id} 
+                            class="slds-listbox__item" 
+                            role="option"
+                            data-id={user.ProfileId}
+                            data-parentid={user.Id}
+                            data-name={user.Name}
+                            onclick={handleUserClick}>
+                            <div class="slds-media">
+                              <span class="slds-media__figure">
+                                <lightning-icon 
+                                  icon-name="standard:user" 
+                                  size="x-small">
+                                </lightning-icon>
+                              </span>
+                              <div class="user-info">
+                                <span class="user-name slds-truncate" 
+                                  title={user.Name}>
+                                  {user.Name}
+                                </span>
+                                <span class="user-email" 
+                                  title={user.Email}>
+                                  {user.Email}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        </template>
+                      </template>
+                      <template if:false={username.length}>
+                        <li class="no-results" role="option">
+                          No users found
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+                <template if:true={showMessage}>
+                  <p class="slds-text-color_error slds-p-left_xx-small">User Not Found</p>
+                </template>
+              </div>
+            </div>
+            <div class="slds-col slds-size_1-of-4 slds-p-right_medium">
+              <template if:true={isSelected}>
+                <div class="permission-type-section">
+                  <lightning-combobox label="Permission Type" value={selectedOptionValue} options={selectedPermissionType} onchange={handleSelectedPermissionTypeOption}></lightning-combobox>
+                </div>
+              </template>
+            </div>
+            <div class="slds-col slds-size_1-of-4 slds-p-right_medium">
+              <template if:true={isPermissionSetTemp}>
+                <lightning-combobox label="Permission Set" value={userPermissionSetValue} disabled={isPermissionEnabledUser} options={userPermissionSetOption} onchange={handleUserPermissionSetChange}></lightning-combobox>
+              </template>
+              <template if:true={isPermissionSetGroupTemp}>
+                <lightning-combobox label="Permission Set Group" value={userPermissionSetGroupValue} disabled={isPermissionEnabledUser} options={userPermissionSetGroupOption} onchange={handleUserPermissionSetGroupChange}></lightning-combobox>
+              </template>
+            </div>
+          </div>
+          <br>
+          <template if:true={isPermissionObj}>
+            <template if:true={isProfile}>
+              <div
+                style="display: grid; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                <strong><h2 style="margin-left: 10px;">{selectedOptionValue} Details</h2></strong>
+                <!-- Box container -->
+                <div style="display: flex; flex-direction: row; justify-content: space-between; padding: 10px; gap: 20px;">
+                  <!-- Left Column -->
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                    <p><strong>Name:</strong> {selecteduserLabel}</p>
+                    <p><strong>Developer Name:</strong> {selecteduserApiName}</p>
+                    <p><strong>License Name:</strong> {selecteduserLicense}</p>
+                  </div>
+            
+                  <!-- Right Column -->
+                  <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
+                    <p><strong>Type:</strong>{selecteduserType}</p>
+                    <p><strong>Description:</strong> {selecteduserDescription}</p>
+                  </div>
+  
+                  <div style="display: flex; justify-content: flex-end; gap: 10px; padding: 10px;">
+                  <lightning-button variant="neutral" label="View Users" title="View Users" onclick={handleviewUserClick}>
+                  </lightning-button>
+                  <lightning-button variant="neutral" label="Edit Property" title="Edit Property" onclick={handleEditPropClick}>
+                  </lightning-button>
+                </div>
+                </div>
+            
+                <!-- Button Section -->
+                
+              </div>
+            </template>
+            <br>      
+            <template if:false={showChild}>
+              <span style="display:flex;padding-left:15px;">
+                <h2 style="font-size: 20px;">No PermissionSet/PermissionSetGroup assigned to this user.</h2>
+              </span>
+            </template>      
+            <template if:true={showChild}>
+            <div style="display:flex; width: 100%; justify-content:space-between;">
+              <div>
+                <template if:true={isUserNameForPermission}>
+                  <span style="display:flex;padding-left:15px;">
+                    <h2 style="font-size: 20px;">Permissions for {searchusername}</h2>
+                  </span>
+                </template>
+                <template if:true={isPermissionSetName}>
+                  <span style="display:flex;padding-left:15px;">
+                    <h2 style="font-size: 20px;">Permissions for {searchusername} granted by Permission Set ({selectedUserPermissionTypeLabel})</h2>
+                  </span>
+                </template>
+                <template if:true={isPermSetSelected}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Permissions for {searchusername} granted by Profile ({selectedUserProfileLabel})</h2>
+                </span>
+                </template>
+                <template if:true={userNameClick}>
+                  <span style="display:flex;padding-left:15px;">
+                    <h2 style="font-size: 20px;">Permissions for {searchusername}</h2>
+                  </span>
+                </template>
+                <template if:true={isPermissionSetGroupName}>
+                  <span style="display:flex;padding-left:15px;">
+                    <h2 style="font-size: 20px;">Permissions for {searchusername} granted by Permission Set Group ({selectedUserPermissionTypeLabel})</h2>
+                  </span>
+                </template>
+              </div>
+              <div class="refresh-container" 
+                   role="button" 
+                   tabindex="0"
+                   aria-label="Refresh data"
+                   onclick={handleRefresh}
+                   onkeypress={handleRefreshKeypress}>
+                <lightning-icon 
+                    icon-name="utility:refresh" 
+                    alternative-text="Refresh"
+                    size="small" 
+                    class="refresh-icon">
+                </lightning-icon>
+              </div>
+            </div>
+              <br>              
+              <lightning-tabset variant="scoped" active-tab-value={activePermTab} class="custom-tabset-label">
+                <!-- Object permissions -->
+                <lightning-tab label="Object Permissions" value="Object" class="custom-tab-label" onactive={handlePermsTab}>
+                  <lightning-layout>
+                    <lightning-layout-item size="6">
+                      <lightning-combobox class="combo-box-width" value={selectedObjectType} placeholder="Select Object Type" options={objTypeOptions} onchange={handleObjectTypeChange} style="width:350px"></lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="6">
+                      <div style="display: flex; justify-content: flex-end; align-items: center; margin-left: auto;">
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                          <!-- Green Indicator -->
+                          <div style="display: flex; align-items: center;">
+                            <div style="width: 20px; height: 20px; background-color: #bbf7d0; border-radius: 50%;"></div>
+                            <span style="margin-left: 10px;">Full Access (Object And Field)</span>
+                          </div>
+                          <!-- Yellow Indicator -->
+                          <div style="display: flex; align-items: center;">
+                            <div style="width: 20px; height: 20px; background-color: #fef08a; border-radius: 50%;"></div>
+                            <span style="margin-left: 10px;">Partial Access (Object Or Field)</span>
+                          </div>
+                          <!-- Red Indicator -->
+                          <div style="display: flex; align-items: center;">
+                            <div style="width: 20px; height: 20px; background-color: #fda4af; border-radius: 50%;"></div>
+                            <span style="margin-left: 10px;">No Access</span>
+                          </div>
+                        </div>
+                      </div>
+                    </lightning-layout-item>
+                  </lightning-layout>
+                  <br>
+                  <!-- Permission Analyzer Object Child -->
+                  <template if:true={hasEntityDef}>
+                    <c-permission-analyzer-object metadata-permission={metadataPermissions} permission-set-id-to-update={permId} user-profile-id={userProfileId} profile-names={profileTypeName} enable-obj-permissions={enableObjAndFieldEditAccess} enable-default-profile={enableDefault} enable-record-type-permissions={enableRecordTypeEdit} enable-grp-mute-permissions={enableMutePermissions} perm-set-grp-id={permSetGroupId} enable-help-text-icon={enableHelpText} prof-name={selectedUserProfileLabel} perset-name={selectedUserPermissionTypeLabel} type-value={selectedOptionValue} user-id={userId} onnewpermissionsettoadd={handleNewPermissionSetCreation} perm-api-name={selectedUserApiNameWithNameSpace} type={selectedOptionValue} user-value={uservalue} user-value-length={userValueLength} object-list={entityDefObject} perm-set-lists={permissionSetsList} permission-setid={permissionSetIdList}></c-permission-analyzer-object>
+                  </template>
+                  <template if:false={hasEntityDef}>
+                    <span style="display:flex;padding-left:15px;">
+                      <h2 style="font-size: 20px;">No Managed Package Objects are found in this Org.</h2>
+                    </span>
+                  </template>
+                </lightning-tab>
+                <!-- User Permission Child -->
+                <lightning-tab label="User Permissions" value="User" class="custom-tab-label" onactive={handlePermsTab}>
+                   <c-user-permission-analyzer permission-set-ids={permissionSetIdList} perm-set-id-to-fetch={permIdsToFetchUserPerms} enable-edit={enableObjAndFieldEditAccess} profile-type={selecteduserType} enable-help-text={enableHelpText} type={selectedOptionValue} permission-name={selecteduserApiName} user-label={selecteduserLabel} enable-mute={enableMutePermissions} perm-set-grp-id={permSetGroupId} perm-set-lists={permissionSetsList} user-id={userId} onnewpermissionsettoadd={handleNewPermissionSetCreation} user-value={uservalue} user-value-length={userValueLength}></c-user-permission-analyzer>
+                </lightning-tab>
+                <!-- Tab Setting permission Child -->
+                <template if:true={enableTabSetting}>
+                  <lightning-tab label="Tab Settings" value="Tab" class="custom-tab-label" onactive={handlePermsTab}>
+                      <c-tab-permission-analyzer perm-api-name={selectedUserApiNameWithNameSpace} perm-set-lists={permissionSetsList} type={selectedOptionValue} user-id={userId} csn-only-user={csnOnlyUser} profile-type={selecteduserType} perm-id={permId} selecteduser-label={selecteduserLabel} onnewpermissionsettoadd={handleNewPermissionSetCreation} user-value={uservalue} user-value-length={userValueLength}></c-tab-permission-analyzer>
+                  </lightning-tab>
+                </template>
+              </lightning-tabset>
+            </template>        
+          </template>
+        </template>
+      </lightning-tab>
+      <!-- Permission Tab Child -->
+      <lightning-tab label="Permission" value="Permission" onactive={handlePermissionListValues} class="custom-tab-label">
+        <c-manage-permission-component user-permission-options={userPermissionOptions} user-object-options={userObjectOptions} onuserrowaction={handleUserRowAction}></c-manage-permission-component>
+      </lightning-tab>
+    </lightning-tabset>
+    <!-- User Table -->
+    <template if:true={isUsersTable}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_large">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header">
+            <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1"> Users for the selected profile <b>{selecteduserLabel}</b>
+            </h1>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-17">
+            <lightning-datatable key-field="Id" data={uservalue} columns={userColumn} class="slds-p-around_xx-small remove-underline custom-datatable" hide-checkbox-column="true" sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting}></lightning-datatable>
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" aria-label="Cancel and close" name='user cancel' onclick={handleCancel}>Cancel</button>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <!-- Edit Property -->
+    <template if:true={isEditClicked}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header">
+            <h1 id="modal-heading-09" class="slds-modal__title slds-hyphenate" tabindex="-1">Edit Property </h1>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-11">
+            <template if:true={isProfileEdit}>            
+              <lightning-textarea label="Description" name="profile-Description" value={descriptionValue} onchange={handleInput} data-id="profile-Description"></lightning-textarea>
+            </template>
+            <template if:true={isPermissionSetEdit}>
+              <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                  <lightning-input label="Label" required value={labelValue} onchange={handleInput} data-id="permission-set-Label" name="permission-set-Label" disabled={isStandard}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                  <lightning-input label="API Name" required value={apiNameValue} onchange={handleInput} data-id="permission-set-apiName" name="permission-set-apiName" disabled={isStandard}></lightning-input>
+                </div>
+              </div>
+              <lightning-textarea label="Description" value={descriptionValue} onchange={handleInput} data-id="permission-set-Description" name="permission-set-Description" disabled={isStandard}></lightning-textarea>
+            </template>
+            <template if:true={isPermissionSetGroupEdit}>
+              <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                  <lightning-input label="Label" required value={labelValue} onchange={handleInput} data-id="permission-set-group-Label" name="permission-set-group-Label"></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2 slds-p-around_small">
+                  <lightning-input label="API Name" required value={apiNameValue} onchange={handleInput} data-id="permission-set-group-apiName" name="permission-set-group-apiName"></lightning-input>
+                </div>
+              </div>
+              <lightning-textarea label="Description" value={descriptionValue} onchange={handleInput} data-id="permission-set-group-Description" name="permission-set-group-Description"></lightning-textarea>
+            </template>
+          </div>
+          <div class="slds-modal__footer">
+            <button class="slds-button slds-button_neutral" onclick={handleCancel} name="edit Cancel">Cancel</button>
+            <button class="slds-button slds-button_brand" disabled={isSaveDisabled} onclick={handleSave}>Save</button>
+          </div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    </div>
+    <!-- Spinner -->
+    <template if:true={showSpinner}>
+      <div class="exampleHolder">
+        <lightning-spinner alternative-text="Loading" class="slds-is-fixed" size="large" style="z-index: 9999;"></lightning-spinner>
+      </div>
+    </template>
+    </template>

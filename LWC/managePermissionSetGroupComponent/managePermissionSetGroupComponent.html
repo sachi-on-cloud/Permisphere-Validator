@@ -1,0 +1,361 @@
+<template>
+    <!-- <lightning-card> -->
+      <div class="permisphere-container" role="main">
+        <div class="permisphere-watermark">
+          <div class="" style="padding: 5px;border: 1px solid #ccc;border-radius: 8px;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+            <div class="slds-col slds-size_4-of-4 slds-p-right_medium" style="padding-left:10px;display:flex;justify-content:space-between;" >
+              <div class="slds-form-element">
+                <lightning-combobox
+                  label="Manage Permission Sets"
+                  name="manage"
+                  value={manageValue}
+                  options={manageOptions}
+                  onchange={handleManageChange}
+                  aria-describedby="manageHelp">
+                </lightning-combobox>
+                <div id="manageHelp" class="slds-form-element__help">
+                  Select type of permission to manage
+                </div>
+              </div>
+              <div style="display:flex; align-items:end;">
+                <c-manage-clone-users></c-manage-clone-users>
+              </div>
+            </div>
+            <!-- PROFILE -->
+            <template if:true={isProfile}>
+              <div class="slds-size_1-of-4 slds-p-right_medium" style="padding-left: 10px;">
+                <lightning-combobox value={profileValue} class="combobox-custom-width" options={profileOptionsVal} onchange={handleProfileChange} placeholder="-- Select a Profile --" ></lightning-combobox>
+              </div>
+              <template if:true={isSelectedProfile}>
+                <c-manage-profile-component profile-value={selectedProfile} onprofilecloneevent={handleProfileCloneCustomEvent}></c-manage-profile-component>
+              </template>       
+            </template>
+            <!-- PERMISSION SET DROPDOWN-->
+            <template if:true={isPerSet}>
+              <c-manage-permission-set-component show-spinner={showSpinner} onspinnerchange={handleSpinnerChange}></c-manage-permission-set-component>
+            </template>
+            <!-- PERMISSION SET GROUP DROPDOWN   -->
+            <template if:true={isPerSetGrp}>
+              <div>
+                <div style="display: flex; align-items: end;">
+                  <div class="slds-size_1-of-4 slds-p-right_medium" style="margin-left:5px">
+                    <lightning-input label="Permission Set Group Name" type="search" value={searchPerSetGrpName}
+                      onchange={handlePerSetGrp} oncommit={handleUserClear} placeholder="Search Permission Set Group" class="user-label"
+                      style="padding-left:5px;"></lightning-input>
+                  </div>
+                  <div class=" slds-size_3-of-4 slds-p-right_medium slds-text-align_right">
+                    <lightning-button variant="neutral" label="Create Permission set Group" title="Create Permission set Group"
+                      onclick={handleClick}></lightning-button>
+                  </div>
+                </div>
+                <template if:true={showPerSetGrpTable}>
+                  <div style="width: auto;padding:15px;">
+                    <lightning-datatable key-field="Id" data={updatedOtherRecords} columns={perSetGrpcolumns} hide-checkbox-column="true" sorted-by={sortBy} sorted-direction={sortDirection} onsort={doSorting} class="slds-p-around_xx-small remove-underline custom-datatable" onrowaction={handleRowAction}></lightning-datatable>
+                  </div>
+                  <c-user-access-pagination hide-button-labels="true" record-size="20" records={filteredData} onpaginationevent={updateHandler}></c-user-access-pagination>
+                </template>
+                <template if:false={showPerSetGrpTable}>
+                  <span style="display:flex;justify-content:center;">
+                    <h2 style="font-size: 20px;">No Permission Set Group Found</h2>
+                  </span>
+                </template>
+              </div>
+            </template>
+            <!-- User DROPDOWN   -->
+            <template if:true={isUser}>
+              <c-manage-users spinner-value={showSpinner} onspinnerchange={handleSpinnerChange}></c-manage-users>
+            </template>
+          </div>
+        </div>
+        
+        <!-- PERMISSION SET GROUP ACTION MODALS   -->
+        <!--1.PERMISSION SET GROUP ASSIGN MODAL-->
+        <template if:true={isModalAssign}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--2.PERMISSION SET GROUP UNASSIGN MODAL-->
+        <template if:true={isModalUnAssign}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--3.PERMISSION SET GROUP VIEW MODAL-->
+        <template if:true={isModalViewPerSetGrp}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--PERMISSION SET GROUP ---COMBINED PERMISSION-->
+        <template if:true={isCombinedPermissionForPerSetGrp}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--     CREATE FUNCTION FOR PERMISSION SET GROUP       -->
+        <!-- First Modal -->
+        <template if:true={isCreateClicked}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!-- Second Modal -->
+        <template if:true={isCreatedNext}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!-- Third Modal -->
+        <template if:true={isCreateSave}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--PERMISSION SET GROUP--- EDIT MODAL-->
+        <template if:true={isEditClicked}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--PERMISSION SET GROUP--- CLONE MODAL-->
+        <template if:true={isCloneClicked}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <!--PERMISSION SET GROUP--- DELETE MODAL-->
+        <template if:true={isDeleteClicked}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <template if:true={isModalAssignConfirmMessage}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <template if:true={isModalUnAssignConfirmMessage}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <template if:true={isAssignPerSet}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <template if:true={isModalAssignForPerSetConfirmMessage}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+        <template if:true={isModalUnAssignForPerSetConfirmMessage}>
+          <section 
+            role="dialog" 
+            aria-labelledby="modal-heading"
+            aria-describedby="modal-content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+              <header class="slds-modal__header">
+                <h2 id="modal-heading" class="slds-modal__title">
+                  {modalTitle}
+                </h2>
+              </header>
+              <div id="modal-content" class="slds-modal__content">
+                <!-- Content here -->
+              </div>
+            </div>
+          </section>
+        </template>
+      </div>
+      <template if:true={showSpinner}>
+        <div class="exampleHolder">
+          <lightning-spinner class="slds-is-fixed" style="z-index: 9999;" alternative-text="Loading" size="large"></lightning-spinner>
+        </div>
+      </template>
+    </div>
+    <!-- </lightning-card> -->
+  </template>

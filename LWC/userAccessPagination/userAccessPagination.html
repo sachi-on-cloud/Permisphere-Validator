@@ -1,0 +1,69 @@
+<template>
+    <nav class="pagination-nav" role="navigation" aria-label="Pagination Navigation">
+        <lightning-layout>
+            <!-- First Page -->
+            <lightning-layout-item class="slds-p-around_x-small" size="1">
+                <lightning-button 
+                    label={firstButtonLabel}
+                    name="first"
+                    icon-name="utility:jump_to_left"
+                    onclick={firstHandler}
+                    disabled={disablePrevious}
+                    class="slds-button_brand pagination-button"
+                    aria-label="Go to first page"
+                    variant="brand"
+                    stretch>
+                </lightning-button>
+            </lightning-layout-item>
+
+            <!-- Previous Page -->
+            <lightning-layout-item class="slds-p-around_x-small" size="1">
+                <lightning-button 
+                    label={previousButtonLabel}
+                    name="previous"
+                    icon-name="utility:chevronleft"
+                    onclick={previousHandler}
+                    disabled={disablePrevious}
+                    class="slds-button_brand pagination-button"
+                    aria-label="Go to previous page"
+                    variant="brand"
+                    stretch>
+                </lightning-button>
+            </lightning-layout-item>
+
+            <!-- Current Page Info -->
+            <lightning-layout-item class="slds-p-top_medium slds-p-left_medium" size="3">
+                <div class="current-page-info" role="status" aria-live="polite">
+                    <p class="slds-text-align_center slds-text-title_bold">
+                        {currentPageLabel}
+                    </p>
+                </div>
+            </lightning-layout-item>
+
+            <!-- Next Page -->
+            <lightning-layout-item class="slds-p-around_x-small" size="1">
+                <lightning-button 
+                    label={nextButtonLabel}
+                    name="next"
+                    icon-name="utility:chevronright"
+                    icon-position="right"
+                    onclick={nextHandler}
+                    disabled={disableNext}
+                    class="slds-button_brand pagination-button"
+                    aria-label="Go to next page"
+                    variant="brand"
+                    stretch>
+                </lightning-button>
+            </lightning-layout-item>
+
+            <!-- Total Records -->
+            <lightning-layout-item class="slds-p-top_medium" size="2">
+                <div class="total-records" role="status" aria-live="polite">
+                    <p class="slds-text-align_center slds-text-title_bold">
+                        {totalRecordLabel}
+                    </p>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+    </nav>
+</template>
