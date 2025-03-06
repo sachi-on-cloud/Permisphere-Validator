@@ -1,0 +1,359 @@
+<template>
+    <div class="permission-component" role="region" aria-label="Permission Management">
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <div style="display:flex;">
+          <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+            <lightning-combobox name="PermissionType" label="Permission Type" value={permissionTypeValue} options={permissionTypeOptions} onchange={handlePermissionTypeChange} aria-label="Select Permission Type"></lightning-combobox>
+          </div>
+          <template if:true={isUser}>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <div class="slds-combobox_container" style="position: relative;">
+                <div tabindex="-1" aria-expanded="false" aria-haspopup="listbox" role="combobox">
+                  <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                    <span>
+                      <lightning-input onclick={handleInputClick} type="input" onchange={handleUserPermissionChange} disabled={disableSelect} value={userPermissionValue} onblur={handleInputBlur} label="Permission" placeholder="Select User Permission" max="5"></lightning-input>
+                    </span>
+                  </div>
+                  <template if:true={showPermissions}>
+                    <div id="listbox-id-1" class="slds-dropdown slds-dropdown_length-with-icon-5 slds-dropdown_fluid" role="combobox" tabindex="0" onfocus={handleDropdownFocus} onblur={handleDropdownBlur}>
+                      <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                        <template for:each={filteredUserPerm} for:item="record">
+                          <li role="presentation" class="slds-listbox__item" key={record.value} data-isclicked={record.isClicked} data-label={record.label} data-value={record.value} onclick={handlePermissionSelect}>
+                            <div class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta tpa-item" role="option">
+                              <span class="slds-media__body slds-listbox__option-text slds-listbox__option-text_entity" data-value={record.value} data-label={record.label}>
+                                <template if:true={record.isClicked}>
+                                  <lightning-icon icon-name="utility:check" size="xx-small"></lightning-icon>
+                                </template>
+                                <lightning-formatted-text data-value={record.value} data-label={record.label} value={record.label}></lightning-formatted-text>
+                              </span>
+                            </div>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template if:true={isObject}>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <lightning-combobox name="Object" class="combobox-custom-width" label="Object" value={userObjectValue} placeholder="-- Select a Object --" options={_userObjectOptions} onchange={handleObjectChange}></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <lightning-combobox name="ObjectPermission" label="Permission" value={objectPermissionValue} options={objectPermissionOptions} placeholder="-- Select a Permission --" disabled={isObjectSelected} onchange={handleObjectPermissionChange}></lightning-combobox>
+            </div>
+          </template>
+          <template if:true={isField}>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <lightning-combobox name="Object1" label="Object" class="combobox-custom-width" placeholder="-- Select an Object --" value={objectValue} options={userObjectOptions} onchange={handleFieldObjectChange}></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <lightning-combobox name="field" class="combobox-custom-width_permission" label="Field" placeholder="-- Select a Field--" disabled={isFieldObjectSelected} value={fieldValue} options={fieldOptions} onchange={handleFieldChange}></lightning-combobox>
+            </div>
+            <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+              <lightning-combobox name="FieldPermission" label="Permission" disabled={isFieldSelected} placeholder="-- Select a Permission --" value={fieldPermissionValue} options={fieldPermissionOptions} onchange={handleFieldPermissionChange}></lightning-combobox>
+            </div>
+          </template>
+          <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+            <lightning-combobox label="Profile" value={profileValue} class="combobox-custom-width_permission" disabled={isPermissionEnabledPermission} options={profileOptions} onchange={handleProfileChange}></lightning-combobox>
+          </div>
+          <div class="slds-col slds-size_1-of-7 slds-p-right_medium">
+            <lightning-combobox label="Permission Set" class="combobox-custom-width_permission" value={permissionSetValue} disabled={isPermissionEnabledPermission} options={permissionSetOption} onchange={handlePermissionSetChange}></lightning-combobox>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <lightning-combobox label="Permission Set Group" class="combobox-custom-width_permission" value={permissionSetGroupValue} disabled={isPermissionEnabledPermission} options={permissionSetGroupOption} onchange={handlePermissionSetGroupChange}></lightning-combobox>
+          </div>
+        </div>
+        <template if:true={showLimitMessage}>
+          <span style="text-align: center;font-weight: bold;color: red;">You cannot select more than 5 Permissions.</span>
+        </template>
+        <template if:true={isSelected}>
+          <div style="display:flex; justify-content: space-between; padding:5px;">
+            <div style="display: flex; gap:2px;">
+              <template if:false={searchUserEnabled}>
+                <template for:each={selectedPermissions} for:item="permission">
+                  <span key={permission.value} class="badge">{permission.label} <lightning-icon size="x-small" variant="bare" icon-name="utility:close" name={permission.value} onclick={handleRemoveSelectedAccess}></lightning-icon>
+                  </span>
+                </template>
+              </template>
+              <template if:true={searchUserEnabled}>
+                <div class="slds-form-element" style="padding:2px">
+                  <div class="slds-form-element__control">
+                    <div class="checkbox-container">
+                      <template for:each={selectedPermissions} for:item="checkbox" for:index="index">
+                        <div key={checkbox.label} class="slds-checkbox slds-checkbox_horizontal">
+                          <input type="checkbox" id={checkbox.label} name={checkbox.value} value={checkbox.label} checked={checkbox.checked} data-index={index} onchange={handleUserPermChanges} />
+                          <label class="slds-checkbox__label" for={checkbox.label}>
+                            <span class="slds-checkbox_faux"></span>
+                            <span class="slds-form-element__label">{checkbox.label}</span>
+                          </label>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div style="display: flex; gap:5px;">
+              <template if:false={searchUserEnabled}>
+                <lightning-button label="Search" variant="bare" name="beforeSearch" onclick={handleUserSearch}></lightning-button>
+              </template>
+              <template if:true={searchUserEnabled}>
+                <lightning-button label="Search" variant="success" name="afterSearch" disabled={disableSearch} onclick={handleUserSearch}></lightning-button>
+              </template>
+              <lightning-button label="Reset" variant="bare" onclick={handleclear}></lightning-button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <template if:true={showTable}>
+        <lightning-card style="padding-top:15px">
+          <div style="display:flex; justify-content: space-between; align-items: center; width: 100%;position: relative;padding-top: 15px;">
+            <div style="flex-grow: 1;">
+              <template if:true={isUserAllAccess}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">User with all the seleted UserPermissions access.</h2>
+                </span>
+              </template>
+              <template if:true={isUserAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission.</h2>
+                </span>
+              </template>
+              <template if:true={isUserProfile}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission through profile: {selectedPermissionTypeLabel}.</h2>
+                </span>
+              </template>
+              <template if:true={isUserProfileAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">User with all the seleted UserPermissions access through profile: {selectedPermissionTypeLabel}..</h2>
+                </span>
+              </template>
+              <template if:true={isUserPermSet}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission through permission Set: {selectedPermissionTypeLabel}.</h2>
+                </span>
+              </template>
+              <template if:true={isUserPermSetAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">User with all the seleted UserPermissions access through Permission Set: {selectedPermissionTypeLabel}.</h2>
+                </span>
+              </template>
+              <template if:true={isUserPermSetGrp}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission through permission Set Group: {selectedPermissionTypeLabel}.</h2>
+                </span>
+              </template>
+              <template if:true={isUserpermSetGrpAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">User with all the seleted UserPermissions access through permission Set Group: {selectedPermissionTypeLabel}.</h2>
+                </span>
+              </template>
+              <template if:true={isObjectAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;"> Users with {selectedPermissionLabel} permission on the Object - {selectedObject}</h2>
+                </span>
+              </template>
+              <template if:true={isFieldAll}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission on the {selectedField} ({selectedObject} Object )</h2>
+                </span>
+              </template>
+              <template if:true={isObjectProfile}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;"> Users with {selectedPermissionLabel} permission on the Object - {selectedObject} through profile: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+              <template if:true={isFieldProfile}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission on the {selectedField} ({selectedObject} Object ) through Profile: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+              <template if:true={isObjectPermSet}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;"> Users with {selectedPermissionLabel} permission on the Object - {selectedObject} through Permission Set: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+              <template if:true={isfieldPermSet}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission on the {selectedField} ({selectedObject} Object ) through Profile Permission Set: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+              <template if:true={isObjectPermSetGrp}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;"> Users with {selectedPermissionLabel} permission on the Object - {selectedObject} through Permission Set Group: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+              <template if:true={isfieldPermSetGrp}>
+                <span style="display:flex;padding-left:15px;">
+                  <h2 style="font-size: 20px;">Users with {selectedPermissionLabel} permission on the {selectedField} ({selectedObject} Object ) through Permission Set Group: {selectedPermissionTypeLabel}</h2>
+                </span>
+              </template>
+            </div>
+            <div style="display:flex; gap:5px; padding:5px; position: absolute; right:0;">
+              <lightning-button label="Export Current Page" variant="success" name="exportcurrentpage" onclick={exportToExcel}></lightning-button>
+              <lightning-button label="Export All" variant="success" disabled={maxLimitExceeded} name="exportAll" onclick={exportToExcel}></lightning-button>
+            </div>
+          </div>
+          <div class="table-container">
+            <table role="grid" aria-label="Users with Permissions">
+              <thead>
+                <tr role="row" style="background: #f3f3f3">
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex; gap:5px;">
+                      <input type="text" style="height:4.4vh; padding:10px;border-radius:5px;border:1px solid #747474" placeholder="Full Name" oninput={handleSearch} data-id="col1" aria-label="Filter by Full Name" />
+                      <span class="sort-icons" data-id="col1" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex; gap:5px;">
+                      <input type="text" style="height:4.4vh; padding:10px;border-radius:5px;border:1px solid #747474" placeholder="User Name" oninput={handleSearch} data-id="col2" aria-label="Filter by User Name" />
+                      <span class="sort-icons" data-id="col2" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex;gap:5px;">
+                      <input type="text" style="height:4.4vh; padding:10px;border-radius:5px;border:1px solid #747474" placeholder="Title" oninput={handleSearch} data-id="col3" aria-label="Filter by Title" />
+                      <span class="sort-icons" data-id="col3" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex;gap:5px;">
+                      <input type="text" style="height:4.4vh; padding:10px;border-radius:5px;border:1px solid #747474" placeholder="Role" oninput={handleSearch} data-id="col4" aria-label="Filter by Role" />
+                      <span class="sort-icons" data-id="col4" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex;gap:5px;">
+                      <input type="text" style="height:4.4vh; padding:10px;border-radius:5px;border:1px solid #747474" placeholder="Alias" oninput={handleSearch} data-id="col5" aria-label="Filter by Alias" />
+                      <span class="sort-icons" data-id="col5" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex;gap:5px;width:9vw;">
+                      <lightning-combobox placeholder="Profile" value={searchTerm} data-id="col6" style="margin-top:-18px;font-weight:lighter" class="combobox-custom-width_permission" options={profileOptionSet} onchange={handleSearchCombo} aria-label="Filter by Profile"></lightning-combobox>
+                      <span class="sort-icons" data-id="col6" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex; gap:5px">
+                      <div></div>
+                      <lightning-input type="date" label="Last Login" variant="label-hidden" placeholder="Last Login" onchange={handleDateFilter} data-id="col7" date-style="short" onkeydown={handleKeyDown} style="font-weight: 500" aria-label="Filter by Last Login"></lightning-input>
+                      <button class="slds-m-left_xx-small" style="font-weight: 500" onclick={clearAll}>
+                        <i class="fa fa-close"></i>Reset </button>
+                      <span class="sort-icons" data-id="col7" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <div style="display:flex;gap:5px;">
+                      <lightning-combobox placeholder="License" dropdown-alignment="right" value={searchTerm} data-id="col8" style="margin-top:-18px;font-weight:lighter" class="combobox-custom-width_License" options={userPerLicenseOptions} onchange={handleSearchCombo} aria-label="Filter by License"></lightning-combobox>
+                      <span class="sort-icons" data-id="col8" onclick={sortedColumn} style="align-content : center; font-size: large;"> &#11137; </span>
+                    </div>
+                  </th>
+                  <th role="columnheader" scope="col">
+                    <span>Info</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <template for:each={pagedData} for:item="row">
+                  <tr key={row.Id} role="row">
+                    <td role="cell">{row.col1}</td>
+                    <td role="cell">{row.col2}</td>
+                    <td role="cell">{row.col3}</td>
+                    <td role="cell">{row.col4}</td>
+                    <td role="cell">{row.col5}</td>
+                    <td role="cell">{row.col6}</td>
+                    <td role="cell">{row.col7}</td>
+                    <td role="cell">{row.col8}</td>
+                    <td role="cell">
+                      <lightning-button-icon class="popover-container" style="align-items: center;display:flex;width:fit-content;" variant="bare" icon-name="utility:info" size="x-small" data-id={row.Id} onclick={handlePermissionOrigin}></lightning-button-icon>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+            <div class="pagination" style="padding:25px;display:flex; justify-content:center; gap:10px; position:relative">
+              <lightning-button label="First" icon-name="utility:jump_to_left" onclick={firstHandler} disabled={disablePrevious} class="slds-text-title_bold buttonCSS custom-blue-button" variant="brand"></lightning-button>
+              <lightning-button label="Previous" icon-name="utility:chevronleft" onclick={previousHandler} disabled={disablePrevious} class="slds-text-title_bold buttonCSS" variant="brand"></lightning-button>
+              <span style="font-size: medium; font-weight: bold;">Showing Page {currentPage} of {totalPages}</span>
+              <lightning-button label="Next" icon-name="utility:chevronright" icon-position="right" onclick={nextPage} disabled={disableNext} class="slds-text-title_bold buttonCSS" variant="brand"></lightning-button>
+              <lightning-button label="Last" icon-name="utility:jump_to_right" icon-position="right" onclick={lastHandler} disabled={disableNext} class="slds-text-title_bold buttonCSS" variant="brand"></lightning-button>
+              <span style="font-size: medium; font-weight: bold; position: absolute; right:0;">Showing Record {recordsPerPage} / {totalRecords}</span>
+            </div>
+          </div>
+        </lightning-card>
+      </template>
+      <template if:true={noUserWithPermission}>
+        <div style="display:flex; justify-content: center; align-items: center; width: 100%;position: relative;">
+          <span style="display:flex;padding-left:15px;">
+            <h2 style="font-size: 20px;padding-top: 24px">No users found for the specific criteria.</h2>
+          </span>
+        </div>
+      </template>
+      <template if:true={noFieldFound}>
+        <div style="display:flex; justify-content: center; align-items: center; width: 100%;position: relative;">
+          <span style="display:flex;padding-left:15px;">
+            <h2 style="font-size: 20px;padding-top: 24px">No Fields found with the selected Objects.</h2>
+          </span>
+        </div>
+      </template>
+    </div>
+    <template if:true={showPopOver}>
+      <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <div class="slds-modal__header" style="display:flex;justify-content:space-between;">
+            <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1">Permission Origin</h1>
+            <button class="slds-button slds-button_icon slds-button_icon-small slds-popover__close close-button" title="Close dialog" onclick={handleClosePopover}>
+              <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+              <span class="slds-assistive-text">Close dialog</span>
+            </button>
+          </div>
+          <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <template if:true={isProfile}>
+              <div>
+                <h4 class="slds-text-heading_medium">Profile</h4>
+                <p class="slds-m-left_medium">{profileName}</p>
+              </div>
+            </template>
+            <template if:true={isPermSet}>
+              <template if:true={isProfile}>
+                <hr class="slds-m-vertical_medium" />
+              </template>
+              <div>
+                <h4 class="slds-text-heading_medium">Permission Sets</h4>
+                <template for:each={permSetName} for:item="perms">
+                  <p key={perms} class="slds-m-left_medium">{perms}</p>
+                </template>
+              </div>
+            </template>
+            <template if:true={isPermSetGrp}>
+              <template if:true={isProfile}>
+                <hr class="slds-m-vertical_medium" />
+              </template>
+              <template if:false={isProfile}>
+                <template if:true={isPermSet}>
+                  <hr class="slds-m-vertical_medium" />
+                </template>
+              </template>
+              <div>
+                <h4 class="slds-text-heading_medium">Permission Set Groups</h4>
+                <template for:each={permSetGrpName} for:item="group">
+                  <p key={group} class="slds-m-left_medium">{group}</p>
+                </template>
+              </div>
+            </template>
+          </div>
+          <div class="slds-modal__footer"></div>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={showSpinner}>
+      <div class="exampleHolder">
+        <lightning-spinner alternative-text="Loading" class="slds-is-fixed" size="large"></lightning-spinner>
+      </div>
+    </template>
+  </template>

@@ -1,0 +1,222 @@
+.custom-tab-label {
+    background-color: #f3f3f3;
+}
+
+.custom-tabset-label .slds-active .slds-tabs_scoped__link,
+.slds-active .slds-tabs--scoped__link,
+.slds-is-active .slds-tabs_scoped__link,
+.slds-is-active .slds-tabs--scoped__link {
+    background-color: #00A1E0;
+}
+
+.combobox-custom-width {
+    --lwc-sizeXSmall: 44rem !important;
+
+}
+
+.combobox-custom-width_permission {
+    --lwc-sizeXSmall: 25rem !important;
+
+}
+
+.combobox-custom-width_License {
+    --lwc-sizeXSmall: 15rem !important;
+
+}
+
+.slds-table th lightning-input {
+    width: 100%;
+}
+
+.table-container {
+    margin: 10px;
+    container-type: inline-size;
+    container-name: table;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+th .sort-icons {
+    margin-left: 5px;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+th .sort-icons:hover {
+    color: blue;
+}
+
+th .sort-icons>span {
+    display: block;
+    line-height: 1;
+}
+
+.custom-dropdown {
+    position: relative;
+    border: 1px solid #d8dde6;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    width: 100%;
+}
+
+.dropdown-label {
+    display: block;
+}
+
+.dropdown-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #d8dde6;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.dropdown-option {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-option:hover {
+    background-color: #f4f6f9;
+}
+
+.pill-button {
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.slds-card {
+    background: none !important;
+    border-style: none !important;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+}
+
+.grid-item {
+    border: 1px solid grey;
+    text-align: center;
+    padding: 5px;
+
+}
+
+.no-gap {
+    margin: 0;
+    padding: 10px;
+    background-color: #f3f3f3;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding-inline: 0.75rem;
+    padding-block: 0.375rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--badge-bg);
+    color: var(--text-dark);
+}
+
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.slds-checkbox_horizontal {
+    margin-right: 1rem;
+}
+
+.slds-checkbox .slds-checkbox_faux {
+    width: 1.25rem;
+    height: 1.25rem;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    border: 1px solid #dddbda;
+    border-radius: 0.125rem;
+    background: white;
+    transition: border .1s linear, background-color .1s linear;
+}
+
+.slds-checkbox input:checked+.slds-checkbox__label .slds-checkbox_faux {
+    border-color: #00a1e0;
+    background: #00a1e0;
+}
+
+.slds-checkbox input:checked+.slds-checkbox__label .slds-checkbox_faux:after {
+    display: block;
+    content: '';
+    height: 0.25rem;
+    width: 0.5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+    border-bottom: 2px solid white;
+    border-left: 2px solid white;
+}
+
+.slds-checkbox input:disabled+.slds-checkbox__label {
+    opacity: 0.5;
+}
+
+.popover-container {
+    position: relative;
+    display: inline-block;
+    border-style: none;
+}
+
+.popover {
+    position: absolute;
+    top: 48%;
+    left: 18%;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 100;
+    display: none;
+}
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+}
+
+@media print {
+    .no-print {
+        display: none;
+    }
+}
+
+@container table (max-width: 768px) {
+    .table-container {
+        overflow-x: auto;
+    }
+}

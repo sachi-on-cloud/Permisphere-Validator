@@ -1,0 +1,43 @@
+.slds-modal__header {
+    background-color: var(--lwc-brandPrimary);
+    color: white;
+}
+/* Enhanced Button Styling */
+.slds-button {
+    padding: var(--button-padding);
+    border-radius: var(--button-radius);
+    transition: all 0.3s ease;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.slds-button_brand {
+    background-color: var(--lwc-brandPrimary);
+    border: none;
+    box-shadow: var(--button-shadow);
+}
+
+.slds-button_brand:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--button-hover-shadow);
+}
+
+.slds-button_brand:disabled {
+    background: #c9c9c9;
+    transform: none;
+    cursor: not-allowed;
+}
+
+/* Add focus styles for accessibility */
+.slds-button:focus {
+    outline: 2px solid var(--lwc-brandPrimary);
+    outline-offset: 2px;
+}
+
+/* Use CSS custom properties for better maintainability */
+:host {
+    --button-padding: 0.150rem 0.5rem;
+    --button-radius: 8px;
+    --button-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --button-hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}

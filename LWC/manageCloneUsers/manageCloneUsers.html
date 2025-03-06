@@ -1,0 +1,176 @@
+<template>
+    <div style="display: flex; justify-content: end; width: 100%;gap:10px;">
+      <button class="slds-button slds-button_brand" title="Onboard User" onclick={handleOnBoardUserClick} aria-label="Onboard new user">Onboard User</button>
+    </div>
+    <template if:true={showSpinner}>
+        <lightning-spinner class="slds-is-fixed" alternative-text="Loading" size="large" style="z-index:100000"></lightning-spinner>
+      </template>
+    <template if:true={isCreateOrCloneModal}>
+      <template if:false={showSpinner}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01" class="slds-modal slds-fade-in-open slds-modal_small">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-01" class="slds-modal__title slds-hyphenate" tabindex="-1"> Onboarding user </h1>
+              <button class="slds-button slds-button_icon slds-button_icon-small slds-modal__close" title="Close dialog" onclick={handleClose}>
+                <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                <span class="slds-assistive-text">Close dialog</span>
+              </button>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-17">
+              <div class="slds-text-align_center">
+                <button class="slds-button slds-button_brand" aria-label="Create user" onclick={handleCreate}>Create User</button>
+                <button class="slds-button slds-button_neutral slds-m-left_x-large" aria-label="Clone user" onclick={handleClone}>Clone User</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </template>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <!-- Users List for cloning -->
+    <template if:true={isCloneUsersTable}>
+      <template if:false={showSpinner}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-02"
+          class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1"> Users List </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-18">
+              <!-- Search Input -->
+              <div class="slds-grid slds-wrap slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-1">
+                  <lightning-input type="search" value={searchUserName} label="Search Users"
+                    placeholder="Search Users" onchange={handleSearchChange} aria-describedby="searchHelpText">
+                  </lightning-input>
+                  <div id="searchHelpText" class="slds-assistive-text">
+                    Type to search users by name
+                  </div>
+                </div>
+              </div>
+              <!-- User Table -->
+              <template if:true={hasAvailUser}>
+              <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-table_fixed-layout">
+                <thead>
+                  <tr class="slds-line-height_reset">
+                    <th scope="col" style="width: 10%;">Select</th>
+                    <th scope="col" style="width: 20%;">Name</th>
+                    <th scope="col" style="width: 20%;">License</th>
+                    <th scope="col" style="width: 25%;">Role</th>
+                    <th scope="col" style="width: 25%;">Profile</th>
+                  </tr>
+                </thead>
+                <tbody>   
+                  <template for:each={filteredUsers} for:item="user">
+                    <tr key={user.Id}>
+                      <td>
+                        <input type="radio" name="userSelect" value={user.Id} data-name={user.Name} data-profile={user.Profile} onchange={handleUserSelection} />
+                      </td>
+                      <td>{user.Name}</td>
+                      <td>{user.UserLicenseName}</td>
+                      <td>{user.Role}</td>
+                      <td>{user.Profile}</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+              </template>
+              <template if:false={hasAvailUser}>
+                <span style="display:flex;justify-content:Center;">
+                      <h2 style="font-size:20px;">No User Found</h2>
+                  </span>
+              </template>
+            </div>
+            <div class="slds-modal__footer">
+              <button class="slds-button slds-button_neutral" onclick={handleCancel} name="CancelNext">Cancel</button>
+              <button class="slds-button slds-button_brand slds-m-left_medium" onclick={handleNext} name="Next" disabled={disabledNext}>Next</button>
+            </div>
+          </div>
+        </section>
+      </template>
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+  
+    <template if:true={isCreateUserModal}>
+        <lightning-record-edit-form object-api-name="User" onsuccess={handleSuccessCreate} onerror={handleError}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-03" class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-03" class="slds-modal__title slds-hyphenate" tabindex="-1"> Create User </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-19">
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input-field field-name="FirstName"></lightning-input-field>
+                    <lightning-input-field field-name="LastName"></lightning-input-field>
+                    <lightning-input-field field-name="Username"></lightning-input-field>
+                    <lightning-input-field field-name="Alias"></lightning-input-field>
+                    <lightning-input-field field-name="TimeZoneSidKey"></lightning-input-field>
+                    <lightning-input-field field-name="LocaleSidKey"></lightning-input-field>
+                    <lightning-input-field field-name="EmailEncodingKey"></lightning-input-field>
+                    <lightning-input-field field-name="LanguageLocaleKey"></lightning-input-field>
+                    <lightning-input-field field-name="Email"></lightning-input-field>
+                    <lightning-input-field field-name="Address"></lightning-input-field>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <label for="fieldidCreate">Profile Name</label> <lightning-input-field id="fieldidCreate" field-name="ProfileId" variant="label-hidden"></lightning-input-field>
+                  </div>
+                </div>
+                
+              
+            </div>
+            <div class="slds-modal__footer">
+              <div class="slds-align_absolute-center slds-m-top_medium">
+              <button class="slds-button slds-button_neutral" onclick={handleCancel} name="createCancel">Cancel</button>
+              <button type="submit" class="slds-button slds-button_brand slds-m-left_medium">Save & proceed to Assignments</button>
+                </div>
+            </div>
+          </div>
+        </section>
+        </lightning-record-edit-form>
+      
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={isCloneUserModal}>
+      <!-- <template if:false={showSpinner}> -->
+        <lightning-record-edit-form object-api-name="User" onsuccess={handleSuccessClone} onerror={handleError}>
+        <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-04" class="slds-modal slds-fade-in-open slds-modal_large">
+          <div class="slds-modal__container">
+            <div class="slds-modal__header">
+              <h1 id="modal-heading-04" class="slds-modal__title slds-hyphenate" tabindex="-1"> Clone of {selectedUserName} </h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-20">
+                <div class="slds-grid slds-wrap slds-gutters">
+                  <div class="slds-col slds-size_1-of-2">
+                    <lightning-input-field field-name="FirstName"></lightning-input-field>
+                    <lightning-input-field field-name="LastName"></lightning-input-field>
+                    <lightning-input-field field-name="Username"></lightning-input-field>
+                    <lightning-input-field field-name="Alias"></lightning-input-field>
+                    <lightning-input-field field-name="TimeZoneSidKey"></lightning-input-field>
+                    <lightning-input-field field-name="LocaleSidKey"></lightning-input-field>
+                    <lightning-input-field field-name="EmailEncodingKey"></lightning-input-field>
+                    <lightning-input-field field-name="LanguageLocaleKey"></lightning-input-field>
+                    <lightning-input-field field-name="Email"></lightning-input-field>
+                    <lightning-input-field field-name="Address"></lightning-input-field>
+                  </div>
+                  <div class="slds-col slds-size_1-of-2">
+                    <label for="fieldid">Profile Name</label> <lightning-input-field id="fieldid" field-name="ProfileId" value={defaultProfileId} variant="label-hidden" > </lightning-input-field>
+                  </div>
+                </div>          
+            </div>
+            <div class="slds-modal__footer">
+              <div class="slds-align_absolute-center slds-m-top_medium">
+                <button class="slds-button slds-button_neutral" onclick={handleCancel} name="cloneCancel">Cancel</button>
+                <button type="submit" class="slds-button slds-button_brand slds-m-left_medium">Save & proceed to Assignments</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        </lightning-record-edit-form>
+      <!-- </template> -->
+      <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    <template if:true={isUserAssignmentModal}>
+      <c-manage-user-assignment user-id={createUserId} oncloseassignment={closeAssignment}></c-manage-user-assignment>
+    </template>
+  </template>
